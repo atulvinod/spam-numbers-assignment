@@ -37,6 +37,8 @@ export async function createUser(user: {
     name: string;
     email: string;
     password: string;
+    phoneNumber:string;
+    countryCode:string
 }) {
     const inserted = await repo.createUser(user);
     return inserted;

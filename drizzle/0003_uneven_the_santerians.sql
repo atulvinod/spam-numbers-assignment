@@ -1,0 +1,1 @@
+ALTER TABLE "sns-spam-reports" ADD CONSTRAINT "uniqueMarkedSpam" UNIQUE("marked_by_user_id","phone_number_id");

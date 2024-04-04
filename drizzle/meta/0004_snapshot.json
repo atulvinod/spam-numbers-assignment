@@ -1,0 +1,196 @@
+{
+  "id": "01f91db9-ec98-4b02-a658-708e893e835f",
+  "prevId": "dabd2e9f-779e-4e77-910f-c3be6477d40a",
+  "version": "5",
+  "dialect": "pg",
+  "tables": {
+    "sns-phone-number": {
+      "name": "sns-phone-number",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact_of_user_id": {
+          "name": "contact_of_user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_user_self_number": {
+          "name": "is_user_self_number",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "country_code": {
+          "name": "country_code",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "name": "created",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "numberIndex": {
+          "name": "numberIndex",
+          "columns": [
+            "phone_number",
+            "country_code"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "uniqueNumberIndex": {
+          "name": "uniqueNumberIndex",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phone_number",
+            "country_code"
+          ]
+        }
+      }
+    },
+    "sns-spam-reports": {
+      "name": "sns-spam-reports",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone_number_id": {
+          "name": "phone_number_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "marked_by_user_id": {
+          "name": "marked_by_user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "name": "created",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "phoneNumberIdIdx": {
+          "name": "phoneNumberIdIdx",
+          "columns": [
+            "phone_number_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "uniqueMarkedSpam": {
+          "name": "uniqueMarkedSpam",
+          "nullsNotDistinct": false,
+          "columns": [
+            "marked_by_user_id",
+            "phone_number_id"
+          ]
+        }
+      }
+    },
+    "sns-user": {
+      "name": "sns-user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "name": "created",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "emailIdx": {
+          "name": "emailIdx",
+          "columns": [
+            "email"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "sns-user_email_unique": {
+          "name": "sns-user_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

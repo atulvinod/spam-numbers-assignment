@@ -22,6 +22,41 @@
         }
       }
     },
+    "/spam": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phoneNumber": {
+                    "example": "any"
+                  },
+                  "countryCode": {
+                    "example": "any"
+                  },
+                  "name": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/users": {
       "post": {
         "description": "To create user",
@@ -71,27 +106,17 @@
           }
         },
         "requestBody": {
+          "description": "To create a new user",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "example": "any"
-                  },
-                  "name": {
-                    "example": "any"
-                  },
-                  "password": {
-                    "example": "any"
-                  },
-                  "countryCode": {
-                    "example": "any"
-                  },
-                  "phone": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#components/schemas/createUser"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#components/schemas/createUser"
               }
             }
           }
@@ -183,6 +208,41 @@
         ],
         "xml": {
           "name": "login"
+        }
+      },
+      "createUser": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "email"
+          },
+          "name": {
+            "type": "string",
+            "example": "name"
+          },
+          "password": {
+            "type": "string",
+            "example": "password"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "phoneNumber"
+          },
+          "countryCode": {
+            "type": "string",
+            "example": "countryCode"
+          }
+        },
+        "required": [
+          "email",
+          "name",
+          "password",
+          "phoneNumber",
+          "countryCode"
+        ],
+        "xml": {
+          "name": "createUser"
         }
       }
     },

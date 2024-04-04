@@ -18,29 +18,40 @@ api.post(
         "name",
         "countryCode",
         "password",
+        "phoneNumber",
         ["email", isEmail],
-        ["phone", isPhone],
-        ["countryCode", isCountryCode],
+        ["phoneNumber", isPhone],
+        ["countryCode", isCountryCode]
     ),
     async (req, res, next) => {
         /*
          #swagger.description = 'To create user'
           #swagger.path = '/users'
+          #swagger.requestBody = {
+            description:"To create a new user",
+            required: true,
+            schema:{
+                $ref : "#components/schemas/createUser"
+            }
+          }
           #swagger.responses[201] = {
             description: "User created",
             schema: {
                 data : {
-                    token:"user token"
+                    token: "user token"
                 }
             }
           }
          */
         try {
-            const { email, name, password, countryCode, phone } = req.body;
+            const { email, name, password, countryCode, phoneNumber } =
+                req.body;
             const createdUser = await userService.createUser({
                 name,
                 email,
                 password,
+                countryCode,
+                phoneNumber,
             });
             const token = userService.generateToken(
                 createdUser.id,
@@ -52,7 +63,7 @@ api.post(
                 data: { user: createdUser, token },
             });
         } catch (error) {
-            routeErrorHandler(error as Error, next);
+            return routeErrorHandler(error as Error, next);
         }
     }
 );
@@ -79,7 +90,7 @@ api.post("/login", validate("email", "password"), async (req, res, next) => {
         const token = await userService.authenticateLogin(email, password);
         return res.json({ data: { token } });
     } catch (error) {
-        routeErrorHandler(error as Error, next);
+        return routeErrorHandler(error as Error, next);
     }
 });
 

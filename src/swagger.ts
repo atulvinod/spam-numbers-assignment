@@ -13,16 +13,28 @@ const doc = {
         },
     ],
     components: {
-        examples:{
-            login:{
-                email:"atulvinod1911@gmail.com",
-                password:"mypassword",
+        examples: {
+            login: {
+                email: "atulvinod1911@gmail.com",
+                password: "mypassword",
             },
         },
         schemas: {
             login: {
                 $email: "email",
                 $password: "password",
+            },
+            createUser: {
+                $email: "email",
+                $name: "name",
+                $password: "password",
+                $phoneNumber: "phoneNumber",
+                $countryCode: "countryCode",
+            },
+            spamRequest: {
+                $phoneNumber: "phoneNumber",
+                $countryCode: "Countrycode",
+                $name: "name",
             },
         },
         securitySchemes: {

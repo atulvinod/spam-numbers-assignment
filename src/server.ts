@@ -10,18 +10,20 @@ import express, { Request, Response, NextFunction } from 'express';
 import logger from 'jet-logger';
 
 import 'express-async-errors';
+import authenticate from "@src/middlewares/auth";
 
-import healthRouter from '@src/routes/health.route';
-import userRouter from '@src/routes/user.route';
+import healthRouter from "@src/routes/health.route";
+import userRouter from "@src/routes/user.route";
+import spamRouter from "@src/routes/spam.route";
 
-import paths from '@src/constants/paths';
+import paths from "@src/constants/paths";
 
-import envVars from '@src/constants/envVars';
-import httpStatusCodes from '@src/constants/httpStatusCodes';
+import envVars from "@src/constants/envVars";
+import httpStatusCodes from "@src/constants/httpStatusCodes";
 
-import { nodeEnvs } from '@src/constants/misc';
-import { ApplicationError, RouteError } from '@src/other/classes';
-import { createRoute } from './util/misc';
+import { nodeEnvs } from "@src/constants/misc";
+import { ApplicationError, RouteError } from "@src/other/classes";
+import { createRoute } from "./util/misc";
 import swaggerUi from "swagger-ui-express";
 import swaggerOutput from "./swagger_output.json";
 
@@ -49,6 +51,7 @@ if (envVars.nodeEnv === nodeEnvs.Production.valueOf()) {
 // Add APIs, must be after middleware
 app.use(createRoute(paths.healthCheck), healthRouter);
 app.use(createRoute(paths.users), userRouter);
+app.use(createRoute(paths.spam), authenticate(), spamRouter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
 
 // Add error handler

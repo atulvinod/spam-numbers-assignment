@@ -4,7 +4,8 @@
 
 
 export default {
-    base: '/api/v1',
-    healthCheck: 'health',
-    users:'users',
+    base: "/api/v1",
+    healthCheck: "health",
+    users: "users",
+    spam: "spam",
 } as const;
