@@ -22,6 +22,8 @@ import httpStatusCodes from '@src/constants/httpStatusCodes';
 import { nodeEnvs } from '@src/constants/misc';
 import { ApplicationError, RouteError } from '@src/other/classes';
 import { createRoute } from './util/misc';
+import swaggerUi from "swagger-ui-express";
+import swaggerOutput from "./swagger_output.json";
 
 // **** Variables **** //
 
@@ -36,7 +38,7 @@ app.use(cookieParser(envVars.cookieProps.secret));
 
 // Show routes called in console during development
 if (envVars.nodeEnv === nodeEnvs.Dev.valueOf()) {
-    app.use(morgan('dev'));
+    app.use(morgan("dev"));
 }
 
 // Security
@@ -47,6 +49,8 @@ if (envVars.nodeEnv === nodeEnvs.Production.valueOf()) {
 // Add APIs, must be after middleware
 app.use(createRoute(paths.healthCheck), healthRouter);
 app.use(createRoute(paths.users), userRouter);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
+
 // Add error handler
 app.use(
     (
