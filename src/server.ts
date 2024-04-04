@@ -11,7 +11,6 @@ import logger from 'jet-logger';
 
 import 'express-async-errors';
 
-import baseRouter from '@src/routes/api';
 import healthRouter from '@src/routes/health.route';
 import userRouter from '@src/routes/user.route';
 
@@ -46,7 +45,6 @@ if (envVars.nodeEnv === nodeEnvs.Production.valueOf()) {
 }
 
 // Add APIs, must be after middleware
-app.use(paths.base, baseRouter);
 app.use(createRoute(paths.healthCheck), healthRouter);
 app.use(createRoute(paths.users), userRouter);
 // Add error handler
