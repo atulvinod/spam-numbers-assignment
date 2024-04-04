@@ -6,12 +6,15 @@ import { compare } from 'bcrypt';
 import HttpStatusCodes from '@src/constants/httpStatusCodes';
 
 export const errors = {
-    NOT_FOUND: new ApplicationError('User not found'),
-    EMAIL_PWD_AUTH_ERROR: new ApplicationError('Email or password is incorrent',
-        {
-            routeError: new RouteError(HttpStatusCodes.UNAUTHORIZED,
-                'Email or password is incorrect'),
-        }),
+    NOT_FOUND: new ApplicationError({
+        routeError: new RouteError(HttpStatusCodes.NOT_FOUND, "User not found"),
+    }),
+    EMAIL_PWD_AUTH_ERROR: new ApplicationError({
+        routeError: new RouteError(
+            HttpStatusCodes.UNAUTHORIZED,
+            "Email or password is incorrect"
+        ),
+    }),
 };
 
 export async function getUserById(id: number) {

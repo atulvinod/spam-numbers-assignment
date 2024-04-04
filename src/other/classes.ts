@@ -19,14 +19,17 @@ export class RouteError extends Error {
 }
 
 export class ApplicationError extends Error {
-    public message: string;
+    public message: string = "error";
     public code?: number;
     public routeError?: RouteError;
 
-    public constructor(message:string, opts?: 
-        { code?: number, routeError?: RouteError}){
-        super(message);
-        this.message = message;
+    public constructor(opts: {
+        message?: string;
+        code?: number;
+        routeError?: RouteError;
+    }) {
+        super(opts.message);
+        if (opts.message) this.message = opts.message;
         this.code = opts?.code;
         this.routeError = opts?.routeError;
     }

@@ -6,10 +6,12 @@ import { hash } from 'bcrypt';
 import HttpStatusCodes from '@src/constants/httpStatusCodes';
 
 const errors = {
-    USER_ALREADY_EXISTS: new ApplicationError('User already exists',
-        {routeError: 
-            new RouteError(HttpStatusCodes.CONFLICT, 'User already exists'),
-        }),
+    USER_ALREADY_EXISTS: new ApplicationError({
+        routeError: new RouteError(
+            HttpStatusCodes.CONFLICT,
+            "User already exists"
+        ),
+    }),
 };
 
 export async function findById(id: number) {
