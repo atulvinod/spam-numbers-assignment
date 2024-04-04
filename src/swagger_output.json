@@ -26,8 +26,23 @@
       "post": {
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/spamRequest"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#components/schemas/spamRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication token is required"
           }
         },
         "security": [
@@ -36,21 +51,17 @@
           }
         ],
         "requestBody": {
+          "description": "To create a spam report",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "phoneNumber": {
-                    "example": "any"
-                  },
-                  "countryCode": {
-                    "example": "any"
-                  },
-                  "name": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#components/schemas/spamRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#components/schemas/spamRequest"
               }
             }
           }
@@ -243,6 +254,31 @@
         ],
         "xml": {
           "name": "createUser"
+        }
+      },
+      "spamRequest": {
+        "type": "object",
+        "properties": {
+          "phoneNumber": {
+            "type": "string",
+            "example": "phoneNumber"
+          },
+          "countryCode": {
+            "type": "string",
+            "example": "Countrycode"
+          },
+          "name": {
+            "type": "string",
+            "example": "name"
+          }
+        },
+        "required": [
+          "phoneNumber",
+          "countryCode",
+          "name"
+        ],
+        "xml": {
+          "name": "spamRequest"
         }
       }
     },
