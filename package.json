@@ -3,7 +3,7 @@
     "version": "0.0.0",
     "scripts": {
         "swagger-config": "npx ts-node ./src/swagger.ts",
-        "build": "npm run swagger-config && npx ts-node build.ts",
+        "build": "npx ts-node build.ts",
         "lint": "npx eslint --ext .ts src/",
         "lint:tests": "npx eslint --ext .ts spec/",
         "start": "node -r module-alias/register ./dist --env=production",

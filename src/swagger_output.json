@@ -24,7 +24,7 @@
     },
     "/users": {
       "post": {
-        "description": "",
+        "description": "To create user",
         "responses": {
           "201": {
             "description": "User created",
@@ -101,31 +101,6 @@
     "/users/login": {
       "post": {
         "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Login body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "type": "string",
-                  "example": "user"
-                },
-                "password": {
-                  "type": "string",
-                  "example": "1234"
-                }
-              },
-              "required": [
-                "email",
-                "password"
-              ]
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "If authenticated, will return token",
@@ -162,27 +137,17 @@
           }
         },
         "requestBody": {
+          "description": "Endpoint to login and to get the token",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "example": "any"
-                  },
-                  "password": {
-                    "example": "any"
-                  },
-                  "name": {
-                    "example": "any"
-                  },
-                  "countryCode": {
-                    "example": "any"
-                  },
-                  "phone": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#components/schemas/login"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#components/schemas/login"
               }
             }
           }
@@ -191,6 +156,36 @@
     }
   },
   "components": {
+    "examples": {
+      "login": {
+        "value": {
+          "email": "atulvinod1911@gmail.com",
+          "password": "mypassword"
+        }
+      }
+    },
+    "schemas": {
+      "login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "email"
+          },
+          "password": {
+            "type": "string",
+            "example": "password"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "xml": {
+          "name": "login"
+        }
+      }
+    },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",

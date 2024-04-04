@@ -1,13 +1,13 @@
-import { Router } from 'express';
-import HttpStatusCodes from '@src/constants/httpStatusCodes';
-import * as userService from '@src/services/user.service';
+import { Router } from "express";
+import HttpStatusCodes from "@src/constants/httpStatusCodes";
+import * as userService from "@src/services/user.service";
 import {
     isCountryCode,
     isEmail,
     isPhone,
     routeErrorHandler,
-} from '@src/util/misc';
-import jetValidator from 'jet-validator';
+} from "@src/util/misc";
+import jetValidator from "jet-validator";
 const validate = jetValidator();
 const api = Router();
 
@@ -20,10 +20,11 @@ api.post(
         "password",
         ["email", isEmail],
         ["phone", isPhone],
-        ["countryCode", isCountryCode]
+        ["countryCode", isCountryCode],
     ),
     async (req, res, next) => {
         /*
+         #swagger.description = 'To create user'
           #swagger.path = '/users'
           #swagger.responses[201] = {
             description: "User created",
@@ -57,25 +58,21 @@ api.post(
 );
 
 api.post("/login", validate("email", "password"), async (req, res, next) => {
-    /**
-     * #swagger.path = '/users/login'
-     * 
-     *  #swagger.parameters['body'] = {
-            in: 'body',
-            description: 'Login body',
+    /*
+    #swagger.path = '/users/login'
+    #swagger.requestBody = {
+            description: 'Endpoint to login and to get the token',
             required: true,
             schema: {
-                $email: "user",
-                $password: "1234"
+                $ref: "#components/schemas/login"
             }
         }
-     * #swagger.responses[200] = {
+    #swagger.responses[200] = {
             description: 'If authenticated, will return token',
             schema: {
                 token :"token"
             }
      }
-
      */
     try {
         const { email, password } = req.body;

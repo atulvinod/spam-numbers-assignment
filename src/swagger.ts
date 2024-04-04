@@ -13,6 +13,18 @@ const doc = {
         },
     ],
     components: {
+        examples:{
+            login:{
+                email:"atulvinod1911@gmail.com",
+                password:"mypassword",
+            },
+        },
+        schemas: {
+            login: {
+                $email: "email",
+                $password: "password",
+            },
+        },
         securitySchemes: {
             bearerAuth: {
                 type: "http",
