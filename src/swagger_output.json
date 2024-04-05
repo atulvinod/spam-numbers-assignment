@@ -189,6 +189,31 @@
             }
           }
         }
+      },
+      "get": {
+        "description": "to get contact details of user",
+        "parameters": [
+          {
+            "name": "id",
+            "id": "query",
+            "required": true,
+            "description": "Id of the contact",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/users/login": {

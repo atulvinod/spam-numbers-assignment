@@ -141,4 +141,26 @@ api.post(
     },
 );
 
+api.get("/", validate(["id", "number", "query"]), async (req, res, next) => {
+    try {
+        /*
+            #swagger.path = '/users'
+            #swagger.description = 'to get contact details of user'
+            #swagger.parameters['id'] = {
+                id :"query",
+                required: true,
+                description : "Id of the contact"
+            }
+            #swagger.security = [{
+                "bearerAuth":[]
+            }]
+        */
+        const { id } = req.query;
+        const user = await userService.findUserByContactId(Number(id));
+        return res.json({ data: { user } });
+    } catch (error) {
+        return routeErrorHandler(error as Error, next);
+    }
+});
+
 export default api;

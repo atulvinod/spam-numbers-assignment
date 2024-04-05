@@ -1,12 +1,13 @@
 import envVars from "@src/constants/envVars";
-import * as repo from "@src/repos/user.repo";
+import * as userRepo from "@src/repos/user.repo";
 import { sign } from "jsonwebtoken";
 import { compare } from "bcrypt";
+import * as contactRepo from "@src/repos/contact_details.repo";
 
 import errors from "@src/other/errors";
 
 export async function getUserById(id: number) {
-    const user = await repo.findById(id);
+    const user = await userRepo.findById(id);
     if (!user) {
         throw errors.NOT_FOUND;
     }
@@ -17,7 +18,7 @@ export async function getUserByPhoneNumber(
     phoneNumber: string,
     countryCode: string,
 ) {
-    const user = await repo.findByPhoneNumber(phoneNumber, countryCode);
+    const user = await userRepo.findByPhoneNumber(phoneNumber, countryCode);
     if (!user) {
         throw errors.NOT_FOUND;
     }
@@ -31,7 +32,7 @@ export async function createRegisteredUser(user: {
     phoneNumber: string;
     countryCode: string;
 }) {
-    const inserted = await repo.createRegisteredUser(user);
+    const inserted = await userRepo.createRegisteredUser(user);
     return inserted;
 }
 
@@ -42,7 +43,7 @@ export async function createUser(user: {
     countryCode: string;
     contactOfUserId: number;
 }) {
-    const inserted = await repo.createUser(user);
+    const inserted = await userRepo.createUser(user);
     return inserted;
 }
 
@@ -64,7 +65,7 @@ export async function authenticateLogin(
     countryCode: string,
     password: string,
 ) {
-    const existing = await repo.findRegisteredByPhoneNumber(
+    const existing = await userRepo.findRegisteredByPhoneNumber(
         phoneNumber,
         countryCode,
     );
@@ -82,4 +83,12 @@ export async function authenticateLogin(
         existing.phoneNumber,
         existing.countryCode,
     );
+}
+
+export async function findUserByContactId(contactId: number) {
+    const result = await contactRepo.findUserByContactId(contactId);
+    if (!result) {
+        throw errors.NOT_FOUND;
+    }
+    return result;
 }
