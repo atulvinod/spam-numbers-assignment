@@ -142,7 +142,6 @@ export async function createRegisteredUser(obj: {
                 countryCode: obj.countryCode,
             };
         } catch (error) {
-            console.log(error)
             tx.rollback();
             throw error;
         }
