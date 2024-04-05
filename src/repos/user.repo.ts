@@ -107,6 +107,9 @@ export async function createRegisteredUser(obj: {
         obj.countryCode,
     );
     if (existing) {
+        if (existing.isRegisteredUser) {
+            throw errors.USER_ALREADY_EXISTS;
+        }
         await db
             .update(user)
             .set({ isRegisteredUser: true, password: hashedPassword })

@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 const model = pgTable(
-    "sns-contact-details",
+    "sns_contact_details",
     {
         id: serial("id").primaryKey(),
         name: text("name"),

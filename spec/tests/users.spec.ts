@@ -2,6 +2,14 @@ import "jasmine";
 import * as userService from "@src/services/user.service";
 import * as userRepo from "@src/repos/user.repo";
 import { hash } from "bcrypt";
+import supertest, { Test } from "supertest";
+import TestAgent from "supertest/lib/agent";
+import { TApiCb } from "spec/types/misc";
+import app from "@src/server";
+import { createRoute } from "@src/util/misc";
+import paths from "@src/constants/paths";
+import apiCb from "spec/support/apiCb";
+import HttpStatusCodes from "@src/constants/httpStatusCodes";
 
 const user = {
     name: "John Doe",
@@ -17,7 +25,7 @@ const resultValue = {
     name: user.name,
 };
 
-describe("user registration and login", () => {
+describe("unit test user registration and login", () => {
     it("should create normal user", async () => {
         spyOn(userRepo, "createUser").and.returnValue(
             Promise.resolve({ id: 2 }),
@@ -57,5 +65,58 @@ describe("user registration and login", () => {
             user.password,
         );
         expect(result).toBeDefined();
+    });
+});
+
+describe("[API] Registered Users", () => {
+    let agent: TestAgent<Test>;
+
+    beforeAll((done) => {
+        agent = supertest.agent(app);
+        done();
+    });
+
+    describe("[POST]", () => {
+        const reqUser = {
+            phoneNumber: "1234567809",
+            countryCode: "+91",
+            password: "mypassword",
+            name: "test user",
+        };
+        const callPostApi = (user: any, cb: TApiCb) =>
+            agent
+                .post(createRoute(paths.users, "registered"))
+                .send(reqUser)
+                .end(apiCb(cb));
+
+        const callLoginPostApi = (user: any, cb: TApiCb) =>
+            agent
+                .post(createRoute(paths.users, "login"))
+                .send(reqUser)
+                .end(apiCb(cb));
+
+        it("should create user", (done) => {
+            callPostApi(null, (res) => {
+                expect(res.status).toBe(HttpStatusCodes.CREATED);
+                done();
+            });
+        });
+
+        it("should conflict", (done) => {
+            callPostApi(null, (res) => {
+                expect(res.status).toBe(HttpStatusCodes.CONFLICT);
+                done();
+            });
+        });
+
+        it("should login", (done) => {
+            callLoginPostApi(null, (res) => {
+                expect(res.status).toBe(HttpStatusCodes.OK);
+                expect(
+                    (res.body as { data?: { token: string } })?.data?.token,
+                ).toBeDefined();
+                done();
+            });
+        });
     });
 });
