@@ -24,6 +24,9 @@ api.get(
                 in: 'query',
                 required: true,
             }
+            #swagger.security = [{
+            "bearerAuth":[]
+            }]
         */
         try {
             const { searchBy, query } = req.query;
