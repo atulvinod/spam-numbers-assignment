@@ -1,6 +1,5 @@
 import db from "@src/lib/database";
 import spamReportModel from "@src/models/spam_reports.model";
-import { ApplicationError } from "@src/other/classes";
 import errors from "@src/other/errors";
 import * as usersRepo from "@src/repos/user.repo";
 import { PostgresError } from "postgres";
