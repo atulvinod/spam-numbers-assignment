@@ -10,8 +10,8 @@ import {
 const model = pgTable(
     "sns-contact-details",
     {
-        id: serial("id"),
-        name: text("id"),
+        id: serial("id").primaryKey(),
+        name: text("name"),
         email: text("email"),
         user_id: integer("user_id"),
         created: timestamp("created").defaultNow(),

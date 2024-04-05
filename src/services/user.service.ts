@@ -64,7 +64,7 @@ export async function authenticateLogin(
     countryCode: string,
     password: string,
 ) {
-    const existing = await repo.findRegisteredByPhoneNumeber(
+    const existing = await repo.findRegisteredByPhoneNumber(
         phoneNumber,
         countryCode,
     );

@@ -1,5 +1,5 @@
 {
-  "id": "4f42433a-756e-4868-af3c-37fcab9ab7fc",
+  "id": "ba1c538a-658e-4be9-8abe-30bd37d8d24b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -10,6 +10,12 @@
       "columns": {
         "id": {
           "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -54,7 +60,7 @@
         "id": {
           "name": "id",
           "type": "serial",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true
         },
         "phone_number_id": {
@@ -105,6 +111,12 @@
       "columns": {
         "id": {
           "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "phone_number": {
+          "name": "phone_number",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -146,7 +158,7 @@
         "phoneNumberIdx": {
           "name": "phoneNumberIdx",
           "columns": [
-            "id",
+            "phone_number",
             "country_code"
           ],
           "isUnique": false

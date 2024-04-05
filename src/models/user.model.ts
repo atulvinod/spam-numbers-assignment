@@ -13,7 +13,7 @@ const model = pgTable(
     "sns_users",
     {
         id: serial("id").primaryKey(),
-        phoneNumber: text("id").notNull(),
+        phoneNumber: text("phone_number").notNull(),
         countryCode: varchar("country_code", { length: 10 }).notNull(),
         contactOfId: integer("contact_of_id"),
         isRegisteredUser: boolean("is_registered_user").default(false),

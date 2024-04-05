@@ -1,12 +1,13 @@
 CREATE TABLE IF NOT EXISTS "sns-contact-details" (
-	"id" text,
+	"id" serial PRIMARY KEY NOT NULL,
+	"name" text,
 	"email" text,
 	"user_id" integer,
 	"created" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "sns_spam_reports" (
-	"id" serial NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
 	"phone_number_id" integer NOT NULL,
 	"marked_by_user_id" integer NOT NULL,
 	"created" timestamp DEFAULT now(),
@@ -14,7 +15,8 @@ CREATE TABLE IF NOT EXISTS "sns_spam_reports" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "sns_users" (
-	"id" text NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
+	"phone_number" text NOT NULL,
 	"country_code" varchar(10) NOT NULL,
 	"contact_of_id" integer,
 	"is_registered_user" boolean DEFAULT false,
@@ -24,4 +26,4 @@ CREATE TABLE IF NOT EXISTS "sns_users" (
 --> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "userIdIdx" ON "sns-contact-details" ("user_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "phoneNumberIdIdx" ON "sns_spam_reports" ("phone_number_id");--> statement-breakpoint
-CREATE INDEX IF NOT EXISTS "phoneNumberIdx" ON "sns_users" ("id","country_code");
+CREATE INDEX IF NOT EXISTS "phoneNumberIdx" ON "sns_users" ("phone_number","country_code");

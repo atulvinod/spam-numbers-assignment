@@ -34,7 +34,7 @@ export async function findByPhoneNumber(
     return result;
 }
 
-export async function findRegisteredByPhoneNumeber(
+export async function findRegisteredByPhoneNumber(
     phoneNumber: string,
     countryCode: string,
 ) {
@@ -98,7 +98,7 @@ export async function createRegisteredUser(obj: {
     countryCode: string;
 }) {
     const hashedPassword = await hash(obj.password, 10);
-    const existing = await findRegisteredByPhoneNumeber(
+    const existing = await findRegisteredByPhoneNumber(
         obj.phoneNumber,
         obj.countryCode,
     );
@@ -125,23 +125,24 @@ export async function createRegisteredUser(obj: {
                     countryCode: obj.countryCode,
                     password: hashedPassword,
                 })
-                .returning({ id: user.id });
+                .returning({ insertedId: user.id });
 
             await contactDetailsRepo.createContactDetails(
                 {
                     name: obj.name,
                     email: obj.email,
-                    user_id: newUser.id,
+                    user_id: newUser.insertedId,
                 },
                 tx,
             );
 
             return {
-                id: newUser.id,
+                id: newUser.insertedId,
                 phoneNumber: obj.phoneNumber,
                 countryCode: obj.countryCode,
             };
         } catch (error) {
+            console.log(error)
             tx.rollback();
             throw error;
         }

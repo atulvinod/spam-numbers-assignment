@@ -6,9 +6,9 @@ export async function createContactDetails(
     obj: typeof contactDetailsModel.$inferInsert,
     tx?: trx,
 ) {
-    const [result] = await (tx ?? db)
+    const [result] = await(tx ?? db)
         .insert(contactDetailsModel)
         .values(obj)
-        .returning({ id: contactDetailsModel.id });
-    return result.id;
+        .returning({ insertedId: contactDetailsModel.id });
+    return result.insertedId;
 }
