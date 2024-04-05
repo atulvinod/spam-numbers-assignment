@@ -1,20 +1,11 @@
 import db from '@src/lib/database';
 import user from '@src/models/user.model';
-import { ApplicationError, RouteError } from "@src/other/classes";
 import { eq } from "drizzle-orm";
 import { hash } from "bcrypt";
-import HttpStatusCodes from "@src/constants/httpStatusCodes";
 import { PostgresError } from "postgres";
 import * as phoneNumberRepo from "./phone_number.repo";
+import errors from '@src/other/errors';
 
-const errors = {
-    USER_ALREADY_EXISTS: new ApplicationError({
-        routeError: new RouteError(
-            HttpStatusCodes.CONFLICT,
-            "User already exists with this email address or phone number"
-        ),
-    }),
-};
 
 export async function findById(id: number) {
     const [result] = await db
@@ -59,15 +50,31 @@ export async function createUser(obj: {
                 .values(insertValueUser)
                 .returning({ insertedId: user.id });
 
-            await phoneNumberRepo.createPhoneNumber(
-                {
-                    phoneNumber: obj.phoneNumber,
-                    countryCode: obj.countryCode,
-                    isUserSelfNumber: true,
-                    contactOfUserId: result.insertedId,
-                },
-                tx,
+            const existingNumber = await phoneNumberRepo.findPhoneNumber(
+                obj.phoneNumber,
+                obj.countryCode
             );
+            if (existingNumber) {
+                await phoneNumberRepo.updatePhoneNumber(
+                    existingNumber.id,
+                    {
+                        isUserSelfNumber: true,
+                        contactOfUserId: result.insertedId,
+                    },
+                    tx
+                );
+            } else {
+                await phoneNumberRepo.createPhoneNumber(
+                    {
+                        phoneNumber: obj.phoneNumber,
+                        countryCode: obj.countryCode,
+                        isUserSelfNumber: true,
+                        contactOfUserId: result.insertedId,
+                    },
+                    tx
+                );
+            }
+          
             return { id: result.insertedId, email: obj.email, name: obj.name };
         } catch (error) {
             if (error instanceof PostgresError) {

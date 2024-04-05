@@ -11,7 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 const model = pgTable(
-    "sns-phone-number",
+    "sns-phone-numbers",
     {
         id: serial("id"),
         phoneNumber: text("phone_number").notNull(),

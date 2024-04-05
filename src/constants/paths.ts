@@ -8,4 +8,5 @@ export default {
     healthCheck: "health",
     users: "users",
     spam: "spam",
+    search: "search",
 } as const;

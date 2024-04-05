@@ -21,7 +21,5 @@ passport.use(new JwtStrategy(opts, async (jwt_payload : {id: number}, done)=>{
     }
 }));
 
-
-export default function () {
-    return passport.authenticate("jwt", { session: false });
-}
+const auth  = passport.authenticate("jwt", { session: false });
+export default auth;

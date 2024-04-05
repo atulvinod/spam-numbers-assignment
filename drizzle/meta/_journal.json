@@ -36,6 +36,20 @@
       "when": 1712236521380,
       "tag": "0004_optimal_quentin_quire",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1712291998180,
+      "tag": "0005_past_spyke",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1712292067262,
+      "tag": "0006_loud_shaman",
+      "breakpoints": true
     }
   ]
 }

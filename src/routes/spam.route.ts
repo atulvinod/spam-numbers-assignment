@@ -43,7 +43,7 @@ api.post(
             const spamReport = await spamService.createSpamReport({
                 countryCode,
                 phoneNumber,
-                markedSpamByUserId: (req.user as { id: number }).id,
+                markedByUserId: (req.user as { id: number }).id,
                 name,
             });
             return res

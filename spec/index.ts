@@ -52,16 +52,17 @@ jasmine.loadConfig({
 // Run all or a single unit-test
 let execResp: Promise<jasmine.JasmineDoneInfo> | undefined;
 if (args.testFile) {
-  const testFile = args.testFile;
-  find.file(testFile + '.spec.ts', './spec', (files: string[]) => {
-    if (files.length === 1) {
-      jasmine.execute([files[0]]);
-    } else {
-      logger.err('Test file not found!');
-    }
-  });
+    const testFile = args.testFile;
+    find.file(testFile + ".spec.ts", "./spec", (files: string[]) => {
+        if (files.length === 1) {
+            jasmine.execute([files[0]]);
+        } else {
+            logger.err("Test file not found!");
+        }
+    });
 } else {
-  execResp = jasmine.execute();
+    console.log("Executing");
+    execResp = jasmine.execute();
 }
 
 // Wait for tests to finish

@@ -1,21 +1,9 @@
-import envVars from '@src/constants/envVars';
-import { ApplicationError, RouteError } from '@src/other/classes';
-import * as repo from '@src/repos/user.repo';
-import { sign } from 'jsonwebtoken';
-import { compare } from 'bcrypt';
-import HttpStatusCodes from '@src/constants/httpStatusCodes';
+import envVars from "@src/constants/envVars";
+import * as repo from "@src/repos/user.repo";
+import { sign } from "jsonwebtoken";
+import { compare } from "bcrypt";
 
-export const errors = {
-    NOT_FOUND: new ApplicationError({
-        routeError: new RouteError(HttpStatusCodes.NOT_FOUND, "User not found"),
-    }),
-    EMAIL_PWD_AUTH_ERROR: new ApplicationError({
-        routeError: new RouteError(
-            HttpStatusCodes.UNAUTHORIZED,
-            "Email or password is incorrect"
-        ),
-    }),
-};
+import errors from "@src/other/errors";
 
 export async function getUserById(id: number) {
     const user = await repo.findById(id);
@@ -37,14 +25,14 @@ export async function createUser(user: {
     name: string;
     email: string;
     password: string;
-    phoneNumber:string;
-    countryCode:string
+    phoneNumber: string;
+    countryCode: string;
 }) {
     const inserted = await repo.createUser(user);
     return inserted;
 }
 
-export function generateToken(id: number, name:string, email: string) {
+export function generateToken(id: number, name: string, email: string) {
     const token = sign({ id, email, name }, envVars.jwt.secret, {
         expiresIn: envVars.jwt.exp,
         issuer: envVars.jwt.issuer,
@@ -53,13 +41,13 @@ export function generateToken(id: number, name:string, email: string) {
     return token;
 }
 
-export async function authenticateLogin(email:string, password:string){
+export async function authenticateLogin(email: string, password: string) {
     const existing = await repo.findByEmail(email);
-    if(!existing){
+    if (!existing) {
         throw errors.NOT_FOUND;
     }
     const comparePwd = await compare(password, existing.password);
-    if(!comparePwd){
+    if (!comparePwd) {
         throw errors.EMAIL_PWD_AUTH_ERROR;
     }
 

@@ -15,6 +15,7 @@ import authenticate from "@src/middlewares/auth";
 import healthRouter from "@src/routes/health.route";
 import userRouter from "@src/routes/user.route";
 import spamRouter from "@src/routes/spam.route";
+import searchRouter from "@src/routes/search.route";
 
 import paths from "@src/constants/paths";
 
@@ -51,7 +52,8 @@ if (envVars.nodeEnv === nodeEnvs.Production.valueOf()) {
 // Add APIs, must be after middleware
 app.use(createRoute(paths.healthCheck), healthRouter);
 app.use(createRoute(paths.users), userRouter);
-app.use(createRoute(paths.spam), authenticate(), spamRouter);
+app.use(createRoute(paths.spam), authenticate, spamRouter);
+app.use(createRoute(paths.search), authenticate, searchRouter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput));
 
 // Add error handler

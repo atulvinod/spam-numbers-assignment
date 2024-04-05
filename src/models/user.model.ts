@@ -1,7 +1,7 @@
 import { index, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
 const model = pgTable(
-    "sns-user",
+    "sns-users",
     {
         id: serial("id").primaryKey(),
         name: text("name").notNull(),

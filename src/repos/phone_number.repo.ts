@@ -4,11 +4,18 @@ import { and, eq, ExtractTablesWithRelations } from "drizzle-orm";
 import { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 import { PgTransaction } from "drizzle-orm/pg-core";
 
+type trxType = PgTransaction<
+    PostgresJsQueryResultHKT,
+    Record<string, never>,
+    ExtractTablesWithRelations<Record<string, never>>
+>;
+
 export async function findPhoneNumber(
     phoneNumber: string,
-    countryCode: string
+    countryCode: string,
+    trx?: trxType
 ) {
-    const [result] = await db
+    const [result] = await (trx ?? db)
         .select()
         .from(phoneNumberModel)
         .where(
@@ -21,6 +28,24 @@ export async function findPhoneNumber(
     return result;
 }
 
+export async function updatePhoneNumber(
+    id: number,
+    updateParams: {
+        id?: number;
+        phoneNumber?: string;
+        contactOfUserId?: number | null | undefined;
+        isUserSelfNumber?: boolean | null | undefined;
+        countryCode?: string | undefined;
+        created?: Date | undefined;
+    },
+    tx?: trxType
+) {
+    await (tx ?? db)
+        .update(phoneNumberModel)
+        .set(updateParams)
+        .where(eq(phoneNumberModel.id, id));
+}
+
 export async function createPhoneNumber(
     obj: {
         phoneNumber: string;
@@ -28,11 +53,7 @@ export async function createPhoneNumber(
         isUserSelfNumber: boolean;
         contactOfUserId?: number;
     },
-    tx?: PgTransaction<
-        PostgresJsQueryResultHKT,
-        Record<string, never>,
-        ExtractTablesWithRelations<Record<string, never>>
-    >
+    tx?: trxType
 ) {
     const insertValuePhoneNumber: typeof phoneNumberModel.$inferInsert = {
         phoneNumber: obj.phoneNumber,

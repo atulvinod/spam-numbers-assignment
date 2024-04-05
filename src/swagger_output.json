@@ -22,6 +22,34 @@
         }
       }
     },
+    "/search": {
+      "get": {
+        "description": "Global search for users using name or phone number",
+        "parameters": [
+          {
+            "name": "searchBy",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/spam": {
       "post": {
         "description": "",

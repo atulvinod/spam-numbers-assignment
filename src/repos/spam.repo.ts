@@ -1,21 +1,44 @@
-import spamReportModel from "@src/models/spam_reports.model";
+import * as phoneNumberRepo from "@src/repos/phone_number.repo";
 import db from "@src/lib/database";
+import spamReportModel from "@src/models/spam_reports.model";
 
 export async function createSpamReport(obj: {
     markedByUserId: number;
-    phoneNumberId: number;
     countryCode: string;
     name: string;
+    phoneNumber: string;
 }) {
-    const insertValue: typeof spamReportModel.$inferInsert = {
-        markedByUserId: obj.markedByUserId,
-        phoneNumberId: obj.phoneNumberId,
-        name: obj.name,
-    };
+    const result = await db.transaction(async (trx) => {
+        try {
+            const existingPhoneNumber = await phoneNumberRepo.findPhoneNumber(
+                obj.phoneNumber,
+                obj.countryCode,
+                trx
+            );
 
-    const [result] = await db
-        .insert(spamReportModel)
-        .values(insertValue)
-        .returning({ insertedId: spamReportModel.id });
-    return { ...obj, id: result.insertedId };
+            if (existingPhoneNumber) {
+                const spamReport = await trx.insert(spamReportModel).values({
+                    markedByUserId: obj.markedByUserId,
+                    phoneNumberId: existingPhoneNumber.id,
+                    name: obj.name,
+                });
+                return spamReport;
+            }
+            const newPhoneNumber = await phoneNumberRepo.createPhoneNumber({
+                phoneNumber: obj.phoneNumber,
+                countryCode: obj.countryCode,
+                isUserSelfNumber: false,
+            });
+            const spamReport = await trx.insert(spamReportModel).values({
+                markedByUserId: obj.markedByUserId,
+                phoneNumberId: +newPhoneNumber.id,
+                name: obj.name,
+            });
+            return spamReport;
+        } catch (error) {
+            trx.rollback();
+            throw error;
+        }
+    });
+    return result;
 }
