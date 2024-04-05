@@ -29,7 +29,6 @@
           {
             "name": "searchBy",
             "in": "query",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -37,7 +36,20 @@
           {
             "name": "query",
             "in": "query",
-            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phoneNumber",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "countryCode",
+            "in": "query",
             "schema": {
               "type": "string"
             }

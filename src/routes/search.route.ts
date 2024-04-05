@@ -11,7 +11,7 @@ const validate = jetValidator();
 
 api.get(
     "/",
-    validate(["searchBy", "string", "query"], ["query", "string", "query"]),
+    validate(["searchBy", "string", "query"]),
     async (req, res, next) => {
         /*
             #swagger.path = '/search'
@@ -19,22 +19,43 @@ api.get(
             #swagger.parameters['searchBy'] = {
                 in: 'query',
                 required: true,
+                description: "Only two valid values, 'name' and 'number'"
             }
             #swagger.parameters['query'] = {
                 in: 'query',
-                required: true,
+            }
+            #swagger.parameters['phoneNumber'] = {
+                in : 'query',
+                type: number
+            }
+            #swagger.parameters['countryCode'] = {
+                in:'query',
             }
             #swagger.security = [{
             "bearerAuth":[]
             }]
         */
         try {
-            const { searchBy, query } = req.query;
+            const { searchBy, query, phoneNumber, countryCode } = req.query;
             switch (searchBy) {
                 case "name": {
                     const result = await searchService.searchByName(
                         query as string,
-                        (req.user as { id: number }).id
+                        (req.user as { id: number }).id,
+                    );
+                    return res.json({ data: { result } });
+                }
+                case "number": {
+                    if (!phoneNumber || !countryCode) {
+                        throw new RouteError(
+                            HttpStatusCodes.BAD_REQUEST,
+                            "Phone number or country code is missing",
+                        );
+                    }
+                    const result = await searchService.searchByPhone(
+                        phoneNumber as string,
+                        countryCode as string,
+                        (req.user as { id: number }).id,
                     );
                     return res.json({ data: { result } });
                 }
@@ -42,14 +63,14 @@ api.get(
                     throw new ApplicationError({
                         routeError: new RouteError(
                             HttpStatusCodes.METHOD_NOT_ALLOWED,
-                            "Unsupported searchBy type"
+                            "Unsupported searchBy type",
                         ),
                     });
             }
         } catch (error) {
             return routeErrorHandler(error as Error, next);
         }
-    }
+    },
 );
 
 export default api;

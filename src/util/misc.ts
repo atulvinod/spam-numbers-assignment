@@ -2,8 +2,8 @@
  * Miscellaneous shared functions go here.
  */
 
-import { ApplicationError } from '@src/other/classes';
-import paths from '@src/constants/paths';
+import { ApplicationError, RouteError } from "@src/other/classes";
+import paths from "@src/constants/paths";
 
 /**
  * Get a random number between 1 and 1,000,000,000,000
@@ -23,16 +23,12 @@ export function tick(milliseconds: number): Promise<void> {
     });
 }
 
-export function routeErrorHandler(error: Error, next: (error:Error) => void){
-    if(error instanceof ApplicationError){
-        if (error.routeError){
-            next(error.routeError);
-        }else{
-            next(error);
+export function routeErrorHandler(error: Error, next: (error: Error) => void) {
+    if (error instanceof ApplicationError) {
+        if (error.routeError) {
+            return next(error.routeError);
         }
-        return;
     }
-
     next(error);
 }
 
