@@ -2,6 +2,7 @@ import "jasmine";
 import * as userService from "@src/services/user.service";
 import * as userRepo from "@src/repos/user.repo";
 import { hash } from "bcrypt";
+
 const user = {
     name: "John Doe",
     email: "john.doe@example.com",
@@ -17,27 +18,43 @@ const resultValue = {
 };
 
 describe("user registration and login", () => {
-    it("should register user", async () => {
+    it("should create normal user", async () => {
         spyOn(userRepo, "createUser").and.returnValue(
-            Promise.resolve(resultValue)
+            Promise.resolve({ id: 2 }),
+        );
+        const result = await userService.createUser({
+            phoneNumber: user.phoneNumber,
+            countryCode: user.countryCode,
+            contactOfUserId: 1,
+            name: user.name,
+        });
+        expect(result).toEqual({ id: 2 });
+    });
+    it("should create registered user", async () => {
+        spyOn(userRepo, "createRegisteredUser").and.returnValue(
+            Promise.resolve(resultValue),
         );
         const result = await userService.createRegisteredUser(user);
         expect(result).toEqual(resultValue);
     });
     it("should generate user token", async () => {
         const hashedPassword = await hash(user.password, 10);
-        spyOn(userRepo, "findByEmail").and.returnValue(
+        spyOn(userRepo, "findRegisteredByPhoneNumber").and.returnValue(
             Promise.resolve({
-                ...resultValue,
                 password: hashedPassword,
                 id: 1,
                 created: new Date(),
-            })
+                isRegisteredUser: true,
+                phoneNumber: user.phoneNumber,
+                countryCode: user.countryCode,
+                contactOfId: null,
+            }),
         );
 
         const result = await userService.authenticateLogin(
-            user.email,
-            user.password
+            user.phoneNumber,
+            user.countryCode,
+            user.password,
         );
         expect(result).toBeDefined();
     });

@@ -6,6 +6,7 @@ import * as contactDetailsRepo from "@src/repos/contact_details.repo";
 import * as _ from "lodash";
 import errors from "@src/other/errors";
 import { trx } from "@src/other/classes";
+import { PostgresError } from "postgres";
 
 export async function findById(id: number) {
     const [result] = await db
@@ -63,8 +64,8 @@ export async function createUser(obj: {
     if (existing) {
         throw errors.USER_ALREADY_EXISTS;
     }
-    const result = await db.transaction(async (trx) => {
-        try {
+    try {
+        const result = await db.transaction(async (trx) => {
             const [newUser] = await trx
                 .insert(user)
                 .values({
@@ -81,13 +82,16 @@ export async function createUser(obj: {
                     user_id: newUser.id,
                 });
             return newUser;
-        } catch (error) {
-            trx.rollback();
-            throw error;
+        });
+        return result;
+    } catch (error) {
+        if (error instanceof PostgresError) {
+            if (error.constraint_name == "phoneNumberIdx") {
+                throw errors.USER_ALREADY_EXISTS;
+            }
         }
-    });
-
-    return result;
+        throw error;
+    }
 }
 
 export async function createRegisteredUser(obj: {
