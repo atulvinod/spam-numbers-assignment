@@ -1,30 +1,35 @@
-import db from '@src/lib/database';
-import { sql } from "drizzle-orm";
+/* eslint-disable max-len */
+import db from "@src/lib/database";
+import { and, eq, notInArray, sql } from "drizzle-orm";
 import userModel from "@src/models/user.model";
-import phoneNumberModel from "@src/models/phone_number.model";
-import spamReportsModel from "@src/models/spam_reports.model";
-import { PgDialect } from "drizzle-orm/pg-core";
+import contactDetailsModel from "@src/models/contact_details.model";
 
-export async function getPersonsByName(name: string) {
-    // join three tables to get the full name,
-    const like = `${name.toLowerCase()}%`;
-    const sql1 = sql`SELECT 
-            ${phoneNumberModel.id} as phone_no_id,
-            ${userModel.id} as reg_user_id,
-            ${spamReportsModel.id} as spam_report_id,
-            ${spamReportsModel.name} as spam_report_name,
-            ${userModel.name} as reg_user_name
-        FROM ${phoneNumberModel}
-            LEFT JOIN ${userModel}
-                ON ${phoneNumberModel.contactOfUserId} = ${userModel.id}     
-            LEFT JOIN ${spamReportsModel} 
-                ON ${spamReportsModel.phoneNumberId} = ${phoneNumberModel.id}
-            WHERE 
-                (LOWER(${spamReportsModel.name}) LIKE ${like}
-                    OR LOWER(${userModel.name}) LIKE ${like})
-        `;
-    const result1 = await db.execute(sql1);
-    return result1;
+export async function getPersonsByName(name: string, currentUserId: number) {
+    const startsWithlike = `${name.toLowerCase()}%`;
+    const containsLike = `%${name.toLowerCase()}%`;
+    const base = db
+        .select({
+            contact_id: contactDetailsModel.id,
+            name: contactDetailsModel.name,
+            email: sql`CASE WHEN ${userModel.contactOfId} = ${currentUserId} AND ${userModel.isRegisteredUser} = TRUE THEN ${contactDetailsModel.email} ELSE NULL END AS email`,
+        })
+        .from(contactDetailsModel)
+        .leftJoin(userModel, eq(contactDetailsModel.user_id, userModel.id));
+
+    const sql1 = await base.where(
+        sql`LOWER(${contactDetailsModel.name}) LIKE ${startsWithlike}`,
+    );
+
+    const aggSql1Ids = sql1.reduce((agg: number[], v) => {
+        agg.push(v.contact_id);
+        return agg;
+    }, []);
+
+    const sql2 = await base.where(
+        and(
+            notInArray(contactDetailsModel.id, aggSql1Ids),
+            sql`LOWER(${contactDetailsModel.name}) LIKE ${containsLike}`,
+        ),
+    );
+    return [...sql1, ...sql2];
 }
-
-

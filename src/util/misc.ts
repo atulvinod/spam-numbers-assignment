@@ -36,18 +36,21 @@ export function routeErrorHandler(error: Error, next: (error:Error) => void){
     next(error);
 }
 
-export function isEmail(email:unknown){
-    return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test((email as string));
+export function isOptionalEmail(email: unknown) {
+    if (!email) {
+        return true;
+    }
+    return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email as string);
 }
 
-export function isPhone(phone:unknown){
-  return (phone as string).length == 10;
+export function isPhone(phone: unknown) {
+    return (phone as string).length == 10;
 }
 
-export function isCountryCode(code:unknown){
-  return (code as string).startsWith('+');
+export function isCountryCode(code: unknown) {
+    return (code as string).startsWith("+");
 }
 
-export function createRoute(...path_c: string[]){
-  return [paths.base,...path_c].join('/');
+export function createRoute(...path_c: string[]) {
+    return [paths.base, ...path_c].join("/");
 }

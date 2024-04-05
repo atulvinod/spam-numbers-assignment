@@ -1,19 +1,33 @@
-import { index, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import {
+    index,
+    pgTable,
+    serial,
+    text,
+    timestamp,
+    varchar,
+    integer,
+    boolean,
+} from "drizzle-orm/pg-core";
 
 const model = pgTable(
-    "sns-users",
+    "sns_users",
     {
         id: serial("id").primaryKey(),
-        name: text("name").notNull(),
-        email: text("email").notNull().unique(),
-        password: text("password").notNull(),
+        phoneNumber: text("id").notNull(),
+        countryCode: varchar("country_code", { length: 10 }).notNull(),
+        contactOfId: integer("contact_of_id"),
+        isRegisteredUser: boolean("is_registered_user").default(false),
+        password: text("password"),
         created: timestamp("created").defaultNow(),
     },
     (table) => {
         return {
-            emailIdx: index("emailIdx").on(table.email),
+            phoneNumberIdx: index("phoneNumberIdx").on(
+                table.phoneNumber,
+                table.countryCode,
+            ),
         };
-    }
+    },
 );
 
 export default model;

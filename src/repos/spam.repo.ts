@@ -1,38 +1,34 @@
-import * as phoneNumberRepo from "@src/repos/phone_number.repo";
 import db from "@src/lib/database";
 import spamReportModel from "@src/models/spam_reports.model";
+import * as usersRepo from "@src/repos/user.repo";
 
 export async function createSpamReport(obj: {
     markedByUserId: number;
     countryCode: string;
-    name: string;
     phoneNumber: string;
 }) {
     const result = await db.transaction(async (trx) => {
         try {
-            const existingPhoneNumber = await phoneNumberRepo.findPhoneNumber(
+            const existingPhoneNumber = await usersRepo.findByPhoneNumber(
                 obj.phoneNumber,
                 obj.countryCode,
-                trx
+                trx,
             );
 
             if (existingPhoneNumber) {
                 const spamReport = await trx.insert(spamReportModel).values({
                     markedByUserId: obj.markedByUserId,
                     phoneNumberId: existingPhoneNumber.id,
-                    name: obj.name,
                 });
                 return spamReport;
             }
-            const newPhoneNumber = await phoneNumberRepo.createPhoneNumber({
+            const newPhoneNumber = await usersRepo.createUser({
                 phoneNumber: obj.phoneNumber,
                 countryCode: obj.countryCode,
-                isUserSelfNumber: false,
             });
             const spamReport = await trx.insert(spamReportModel).values({
                 markedByUserId: obj.markedByUserId,
                 phoneNumberId: +newPhoneNumber.id,
-                name: obj.name,
             });
             return spamReport;
         } catch (error) {

@@ -3,6 +3,9 @@
  */
 
 import HttpStatusCodes from '@src/constants/httpStatusCodes';
+import { ExtractTablesWithRelations } from "drizzle-orm";
+import { PgTransaction } from "drizzle-orm/pg-core";
+import { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 
 
 /**
@@ -34,3 +37,9 @@ export class ApplicationError extends Error {
         this.routeError = opts?.routeError;
     }
 }
+
+export type trx = PgTransaction<
+    PostgresJsQueryResultHKT,
+    Record<string, never>,
+    ExtractTablesWithRelations<Record<string, never>>
+>;

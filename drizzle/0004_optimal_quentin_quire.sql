@@ -1,1 +1,0 @@
-ALTER TABLE "sns-spam-reports" ADD COLUMN "name" text NOT NULL;

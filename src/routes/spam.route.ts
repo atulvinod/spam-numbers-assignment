@@ -12,7 +12,6 @@ api.post(
     validator(
         "phoneNumber",
         "countryCode",
-        "name",
         ["phoneNumber", isPhone],
         ["countryCode", isCountryCode]
     ),
@@ -44,7 +43,6 @@ api.post(
                 countryCode,
                 phoneNumber,
                 markedByUserId: (req.user as { id: number }).id,
-                name,
             });
             return res
                 .status(HttpStatusCodes.CREATED)

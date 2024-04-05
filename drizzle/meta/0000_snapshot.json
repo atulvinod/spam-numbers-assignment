@@ -1,43 +1,87 @@
 {
-  "id": "4edc5d8e-2787-45eb-9769-93ee57ca8e67",
+  "id": "4f42433a-756e-4868-af3c-37fcab9ab7fc",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
   "tables": {
-    "sns-user": {
-      "name": "sns-user",
+    "sns-contact-details": {
+      "name": "sns-contact-details",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "email": {
           "name": "email",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "password": {
-          "name": "password",
-          "type": "text",
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "created": {
+          "name": "created",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {
-        "emailIdx": {
-          "name": "emailIdx",
+        "userIdIdx": {
+          "name": "userIdIdx",
           "columns": [
-            "email"
+            "user_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "sns_spam_reports": {
+      "name": "sns_spam_reports",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone_number_id": {
+          "name": "phone_number_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "marked_by_user_id": {
+          "name": "marked_by_user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "name": "created",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "phoneNumberIdIdx": {
+          "name": "phoneNumberIdIdx",
+          "columns": [
+            "phone_number_id"
           ],
           "isUnique": false
         }
@@ -45,14 +89,72 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "sns-user_email_unique": {
-          "name": "sns-user_email_unique",
+        "uniqueMarkedSpam": {
+          "name": "uniqueMarkedSpam",
           "nullsNotDistinct": false,
           "columns": [
-            "email"
+            "marked_by_user_id",
+            "phone_number_id"
           ]
         }
       }
+    },
+    "sns_users": {
+      "name": "sns_users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country_code": {
+          "name": "country_code",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact_of_id": {
+          "name": "contact_of_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_registered_user": {
+          "name": "is_registered_user",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created": {
+          "name": "created",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "phoneNumberIdx": {
+          "name": "phoneNumberIdx",
+          "columns": [
+            "id",
+            "country_code"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     }
   },
   "enums": {},

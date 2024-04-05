@@ -101,7 +101,7 @@
         }
       }
     },
-    "/users": {
+    "/users/registered": {
       "post": {
         "description": "To create user",
         "responses": {
@@ -152,6 +152,30 @@
         "requestBody": {
           "description": "To create a new user",
           "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#components/schemas/createRegUser"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#components/schemas/createRegUser"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "description": "To create a non registered user",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
           "content": {
             "application/json": {
               "schema": {
@@ -237,9 +261,13 @@
       "login": {
         "type": "object",
         "properties": {
-          "email": {
+          "countryCode": {
             "type": "string",
-            "example": "email"
+            "example": "countryCode"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "phoneNumber"
           },
           "password": {
             "type": "string",
@@ -247,14 +275,15 @@
           }
         },
         "required": [
-          "email",
+          "countryCode",
+          "phoneNumber",
           "password"
         ],
         "xml": {
           "name": "login"
         }
       },
-      "createUser": {
+      "createRegUser": {
         "type": "object",
         "properties": {
           "email": {
@@ -279,11 +308,44 @@
           }
         },
         "required": [
-          "email",
           "name",
           "password",
           "phoneNumber",
           "countryCode"
+        ],
+        "xml": {
+          "name": "createRegUser"
+        }
+      },
+      "createUser": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "name"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "phoneNumber"
+          },
+          "countryCode": {
+            "type": "string",
+            "example": "countryCode"
+          },
+          "contactOfUserId": {
+            "type": "string",
+            "example": "contactOfUserId"
+          },
+          "email": {
+            "type": "string",
+            "example": "email"
+          }
+        },
+        "required": [
+          "name",
+          "phoneNumber",
+          "countryCode",
+          "contactOfUserId"
         ],
         "xml": {
           "name": "createUser"
@@ -299,16 +361,11 @@
           "countryCode": {
             "type": "string",
             "example": "Countrycode"
-          },
-          "name": {
-            "type": "string",
-            "example": "name"
           }
         },
         "required": [
           "phoneNumber",
-          "countryCode",
-          "name"
+          "countryCode"
         ],
         "xml": {
           "name": "spamRequest"

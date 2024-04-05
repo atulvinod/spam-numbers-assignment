@@ -21,7 +21,7 @@ describe("user registration and login", () => {
         spyOn(userRepo, "createUser").and.returnValue(
             Promise.resolve(resultValue)
         );
-        const result = await userService.createUser(user);
+        const result = await userService.createRegisteredUser(user);
         expect(result).toEqual(resultValue);
     });
     it("should generate user token", async () => {

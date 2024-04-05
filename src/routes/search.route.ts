@@ -33,7 +33,8 @@ api.get(
             switch (searchBy) {
                 case "name": {
                     const result = await searchService.searchByName(
-                        query as string
+                        query as string,
+                        (req.user as { id: number }).id
                     );
                     return res.json({ data: { result } });
                 }

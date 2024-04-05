@@ -1,11 +1,11 @@
 import db from '@src/lib/database';
 import user from '@src/models/user.model';
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { hash } from "bcrypt";
-import { PostgresError } from "postgres";
-import * as phoneNumberRepo from "./phone_number.repo";
-import errors from '@src/other/errors';
-
+import * as contactDetailsRepo from "@src/repos/contact_details.repo";
+import * as _ from "lodash";
+import errors from "@src/other/errors";
+import { trx } from "@src/other/classes";
 
 export async function findById(id: number) {
     const [result] = await db
@@ -16,72 +16,132 @@ export async function findById(id: number) {
     return result;
 }
 
-export async function findByEmail(email: string) {
+export async function findByPhoneNumber(
+    phoneNumber: string,
+    countryCode: string,
+    trx?: trx,
+) {
+    const [result] = await (trx ?? db)
+        .select()
+        .from(user)
+        .where(
+            and(
+                eq(user.phoneNumber, phoneNumber),
+                eq(user.countryCode, countryCode),
+            ),
+        )
+        .limit(1);
+    return result;
+}
+
+export async function findRegisteredByPhoneNumeber(
+    phoneNumber: string,
+    countryCode: string,
+) {
     const [result] = await db
         .select()
         .from(user)
-        .where(eq(user.email, email))
+        .where(
+            and(
+                eq(user.phoneNumber, phoneNumber),
+                eq(user.countryCode, countryCode),
+                eq(user.isRegisteredUser, true),
+            ),
+        )
         .limit(1);
     return result;
 }
 
 export async function createUser(obj: {
+    name?: string;
+    email?: string;
+    phoneNumber: string;
+    countryCode: string;
+    contactOfUserId?: number;
+}) {
+    const existing = await findByPhoneNumber(obj.phoneNumber, obj.countryCode);
+    if (existing) {
+        throw errors.USER_ALREADY_EXISTS;
+    }
+    const result = await db.transaction(async (trx) => {
+        try {
+            const [newUser] = await trx
+                .insert(user)
+                .values({
+                    phoneNumber: obj.phoneNumber,
+                    countryCode: obj.countryCode,
+                    contactOfId: obj.contactOfUserId,
+                })
+                .returning({ id: user.id });
+
+            if (obj.email || obj.name)
+                await contactDetailsRepo.createContactDetails({
+                    email: obj.email,
+                    name: obj.name,
+                    user_id: newUser.id,
+                });
+            return newUser;
+        } catch (error) {
+            trx.rollback();
+            throw error;
+        }
+    });
+
+    return result;
+}
+
+export async function createRegisteredUser(obj: {
     name: string;
-    email: string;
+    email?: string;
     password: string;
     phoneNumber: string;
     countryCode: string;
 }) {
-    const existing = await findByEmail(obj.email);
+    const hashedPassword = await hash(obj.password, 10);
+    const existing = await findRegisteredByPhoneNumeber(
+        obj.phoneNumber,
+        obj.countryCode,
+    );
     if (existing) {
-        throw errors.USER_ALREADY_EXISTS;
+        await db
+            .update(user)
+            .set({ isRegisteredUser: true, password: hashedPassword })
+            .where(eq(user.id, existing.id));
+
+        return _.pick(existing, ["id", "name", "email"]) as {
+            id: number;
+            name: string;
+            email: string;
+        };
     }
 
-    const hashedPassword = await hash(obj.password, 10);
-    const insertValueUser: typeof user.$inferInsert = {
-        name: obj.name,
-        email: obj.email,
-        password: hashedPassword,
-    };
-    const insertedUser = db.transaction(async (tx) => {
+    const insertedUser = await db.transaction(async (tx) => {
         try {
-            const [result] = await tx
+            const [newUser] = await tx
                 .insert(user)
-                .values(insertValueUser)
-                .returning({ insertedId: user.id });
+                .values({
+                    isRegisteredUser: true,
+                    phoneNumber: obj.phoneNumber,
+                    countryCode: obj.countryCode,
+                    password: hashedPassword,
+                })
+                .returning({ id: user.id });
 
-            const existingNumber = await phoneNumberRepo.findPhoneNumber(
-                obj.phoneNumber,
-                obj.countryCode
+            await contactDetailsRepo.createContactDetails(
+                {
+                    name: obj.name,
+                    email: obj.email,
+                    user_id: newUser.id,
+                },
+                tx,
             );
-            if (existingNumber) {
-                await phoneNumberRepo.updatePhoneNumber(
-                    existingNumber.id,
-                    {
-                        isUserSelfNumber: true,
-                        contactOfUserId: result.insertedId,
-                    },
-                    tx
-                );
-            } else {
-                await phoneNumberRepo.createPhoneNumber(
-                    {
-                        phoneNumber: obj.phoneNumber,
-                        countryCode: obj.countryCode,
-                        isUserSelfNumber: true,
-                        contactOfUserId: result.insertedId,
-                    },
-                    tx
-                );
-            }
-          
-            return { id: result.insertedId, email: obj.email, name: obj.name };
+
+            return {
+                id: newUser.id,
+                phoneNumber: obj.phoneNumber,
+                countryCode: obj.countryCode,
+            };
         } catch (error) {
-            if (error instanceof PostgresError) {
-                if (error.constraint_name == "uniqueNumberIndex") {
-                    throw errors.USER_ALREADY_EXISTS;
-                }
-            }
             tx.rollback();
             throw error;
         }

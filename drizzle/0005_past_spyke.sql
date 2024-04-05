@@ -1,1 +1,0 @@
-ALTER TABLE "sns-phone-number" RENAME TO "sns-phone-numbers";

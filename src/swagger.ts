@@ -21,20 +21,27 @@ const doc = {
         },
         schemas: {
             login: {
-                $email: "email",
+                $countryCode: "countryCode",
+                $phoneNumber: "phoneNumber",
                 $password: "password",
             },
-            createUser: {
-                $email: "email",
+            createRegUser: {
+                email: "email",
                 $name: "name",
                 $password: "password",
                 $phoneNumber: "phoneNumber",
                 $countryCode: "countryCode",
             },
+            createUser: {
+                $name: "name",
+                $phoneNumber: "phoneNumber",
+                $countryCode: "countryCode",
+                $contactOfUserId: "contactOfUserId",
+                email: "email",
+            },
             spamRequest: {
                 $phoneNumber: "phoneNumber",
                 $countryCode: "Countrycode",
-                $name: "name",
             },
         },
         securitySchemes: {

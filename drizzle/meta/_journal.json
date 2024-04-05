@@ -5,50 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1712213508795,
-      "tag": "0000_natural_rogue",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1712230909273,
-      "tag": "0001_stale_mystique",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1712233914053,
-      "tag": "0002_smart_juggernaut",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1712234102776,
-      "tag": "0003_uneven_the_santerians",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1712236521380,
-      "tag": "0004_optimal_quentin_quire",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1712291998180,
-      "tag": "0005_past_spyke",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1712292067262,
-      "tag": "0006_loud_shaman",
+      "when": 1712304219989,
+      "tag": "0000_unique_liz_osborn",
       "breakpoints": true
     }
   ]

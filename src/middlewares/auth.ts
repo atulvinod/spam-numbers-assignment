@@ -15,7 +15,11 @@ const opts =  {
 passport.use(new JwtStrategy(opts, async (jwt_payload : {id: number}, done)=>{
     try{
         const user = await userService.getUserById(jwt_payload.id);
-        done(null, user);
+        if (user.isRegisteredUser) {
+            done(null, user);
+        } else {
+            done(new Error("Not a registered user"), false);
+        }
     }catch(error){
         done(error, false);
     }
