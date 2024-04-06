@@ -6,7 +6,7 @@ SHELL [ "/bin/bash","-c" ]
 WORKDIR /app
 COPY . .
 RUN chmod +x ./wait-for-it.sh
-RUN chmod +x ./create-test-env.sh
+RUN chmod +x ./run-tests.sh
 RUN mkdir env
 RUN touch ./env/test.env
 RUN echo "NODE_ENV=test" >> ./env/test.env

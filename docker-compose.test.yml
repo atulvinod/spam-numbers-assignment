@@ -11,7 +11,7 @@ services:
     restart: on-failure
 
   tests:
-    command: ./wait-for-it.sh test-db:5432 -- ./create-test-env.sh
+    command: ./wait-for-it.sh test-db:5432 -- ./run-tests.sh
     build:
       context: .
       dockerfile: tests.Dockerfile
