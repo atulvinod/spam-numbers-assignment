@@ -37,16 +37,13 @@ const args = parse<IArgs>({
 
 // Init Jasmine
 const jasmine = new Jasmine({});
-jasmine.exitOnCompletion = false;
+jasmine.exitOnCompletion = true;
 // Set location of test files
 jasmine.loadConfig({
-    random: true,
-    spec_dir: 'spec',
-    spec_files: [
-        './tests/**/*.spec.ts',
-    ],
+    random: false,
+    spec_dir: "spec",
+    spec_files: ["./tests/**/*.spec.ts"],
     stopSpecOnExpectationFailure: false,
-
 });
 
 // Run all or a single unit-test

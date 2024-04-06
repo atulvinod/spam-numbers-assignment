@@ -5,10 +5,33 @@ import logger from 'jet-logger';
 import { TApiCb, TRes } from 'spec/types/misc';
 
 
+export const maxSpamUser = {
+    email: "maxspam@gmail.com",
+    name: "maxspam@gmail.com",
+    password: "maxspam",
+    phoneNumber: "6666666666",
+    countryCode: "+91",
+};
+
+export const duplicateNumberUser = {
+    phoneNumber: "6666666662",
+    countryCode: "+91",
+};
+
+export const testUser = {
+    email: "testemail@gmail.com",
+    name: "testname",
+    password: "test",
+    phoneNumber: "1111111111",
+    countryCode: "+91",
+};
+
+
+
 /**
  * API callback function.
  */
-function apiCb(
+export function apiCb(
     cb: TApiCb,
     dateParam = "created",
     printErr?: boolean
@@ -69,7 +92,3 @@ function _iterate(param: unknown, prop: string): void {
     }
 }
 
-
-// **** Export default **** //
-
-export default apiCb;

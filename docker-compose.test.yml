@@ -8,5 +8,14 @@ services:
     environment:
       - POSTGRES_PASSWORD=mypassword
       - POSTGRES_USER=postgres
+    restart: on-failure
+
+  tests:
+    command: ./wait-for-it.sh test-db:5432 -- ./create-test-env.sh
+    build:
+      context: .
+      dockerfile: tests.Dockerfile
+    depends_on:
+      - "test-db"
       
 

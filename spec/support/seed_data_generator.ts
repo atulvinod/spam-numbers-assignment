@@ -1,18 +1,12 @@
 import { faker } from "@faker-js/faker";
 import { writeFileSync } from "fs";
 import * as path from "path";
+import { duplicateNumberUser, maxSpamUser, testUser } from "./common";
 
 const REGISTERED_USER_COUNT = 10;
 const NON_REGISTERED_USER_COUNT = 30;
 const SPAM_REPORT_COUNT = 200;
 
-const maxSpamUser = {
-    email: "maxspam@gmail.com",
-    name: "maxspam@gmail.com",
-    password: "maxspam",
-    phoneNumber: "6666666666",
-    countryCode: "+91",
-};
 
 function createRegUser() {
     return {
@@ -37,11 +31,29 @@ function createNormalUser() {
 const registeredUser = faker.helpers.multiple(createRegUser, {
     count: REGISTERED_USER_COUNT,
 });
-registeredUser.push(maxSpamUser);
 
 const normalContactUser = faker.helpers.multiple(createNormalUser, {
     count: NON_REGISTERED_USER_COUNT,
 });
+
+// Adding values for additional test cases
+registeredUser.push(...[maxSpamUser, testUser]);
+normalContactUser.push(
+    ...[
+        {
+            ...duplicateNumberUser,
+            email: "dup1@test.com",
+            contactOfUserId: 1,
+            name: "dupUser1",
+        },
+        {
+            ...duplicateNumberUser,
+            email: "dup2@test.com",
+            contactOfUserId: 1,
+            name: "dupUser2",
+        },
+    ],
+);
 
 const phoneNumbersSet = Array.from(
     [...registeredUser, ...normalContactUser].reduce((agg, v) => {

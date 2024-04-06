@@ -2,6 +2,7 @@ import db from "@src/lib/database";
 import spamReportModel from "@src/models/spam_reports.model";
 import errors from "@src/other/errors";
 import * as usersRepo from "@src/repos/user.repo";
+import { count } from "drizzle-orm";
 import { PostgresError } from "postgres";
 
 export async function createSpamReport(obj: {
@@ -50,4 +51,9 @@ export async function createSpamReport(obj: {
         }
         throw error;
     }
+}
+
+export async function getSpamReportCount() {
+    const [result] = await db.select({ count: count() }).from(spamReportModel);
+    return result.count;
 }

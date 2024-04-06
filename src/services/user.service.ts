@@ -92,3 +92,8 @@ export async function findUserByContactId(contactId: number) {
     }
     return result;
 }
+
+export async function getUserCount() {
+    const result = await userRepo.getUserCount();
+    return result;
+}

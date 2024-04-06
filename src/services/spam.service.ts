@@ -8,3 +8,9 @@ export async function createSpamReport(obj: {
     const result = await spamRepo.createSpamReport(obj);
     return result;
 }
+
+
+export async function getSpamReportCount() {
+    const result = await spamRepo.getSpamReportCount();
+    return result;
+}

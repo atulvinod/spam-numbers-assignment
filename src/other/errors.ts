@@ -18,6 +18,7 @@ export default {
         ),
     }),
     ALREADY_MARKED_SPAM: new ApplicationError({
+        code: 409,
         routeError: new RouteError(
             HttpStatusCodes.CONFLICT,
             "You have already marked this number as spam"

@@ -1,6 +1,6 @@
 import db from '@src/lib/database';
 import user from '@src/models/user.model';
-import { and, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { hash } from "bcrypt";
 import * as contactDetailsRepo from "@src/repos/contact_details.repo";
 import * as _ from "lodash";
@@ -62,7 +62,15 @@ export async function createUser(obj: {
 }) {
     const existing = await findByPhoneNumber(obj.phoneNumber, obj.countryCode);
     if (existing) {
-        throw errors.USER_ALREADY_EXISTS;
+        await contactDetailsRepo.createContactDetails({
+            email: obj.email,
+            name: obj.name,
+            user_id: existing.id,
+        });
+
+        return {
+            id: existing.id,
+        };
     }
     try {
         const result = await db.transaction(async (trx) => {
@@ -76,11 +84,14 @@ export async function createUser(obj: {
                 .returning({ id: user.id });
 
             if (obj.email || obj.name)
-                await contactDetailsRepo.createContactDetails({
-                    email: obj.email,
-                    name: obj.name,
-                    user_id: newUser.id,
-                });
+                await contactDetailsRepo.createContactDetails(
+                    {
+                        email: obj.email,
+                        name: obj.name,
+                        user_id: newUser.id,
+                    },
+                    trx,
+                );
             return newUser;
         });
         return result;
@@ -155,4 +166,9 @@ export async function createRegisteredUser(obj: {
     });
 
     return insertedUser;
+}
+
+export async function getUserCount() {
+    const [result] = await db.select({ count: count() }).from(user);
+    return result.count;
 }

@@ -8,14 +8,15 @@ import { TApiCb } from "spec/types/misc";
 import app from "@src/server";
 import { createRoute } from "@src/util/misc";
 import paths from "@src/constants/paths";
-import apiCb from "spec/support/apiCb";
+import { apiCb, testUser } from "spec/support/common";
 import HttpStatusCodes from "@src/constants/httpStatusCodes";
+import { faker } from "@faker-js/faker";
 
 const user = {
-    name: "testuser",
-    email: "testuser@email.com",
-    password: "testuserpassword",
-    phoneNumber: "0000000000",
+    name: "test_new_create_user",
+    email: "test_new_create_user@email.com",
+    password: "password",
+    phoneNumber: faker.string.numeric(10),
     countryCode: "+91",
 };
 
@@ -83,27 +84,32 @@ describe("[API] Registered Users", () => {
             password: user.password,
             name: user.name,
         };
-        const callPostApi = (user: any, cb: TApiCb) =>
-            agent
-                .post(createRoute(paths.users, "registered"))
-                .send(reqUser)
-                .end(apiCb(cb));
 
         const callLoginPostApi = (user: any, cb: TApiCb) =>
             agent
                 .post(createRoute(paths.users, "login"))
-                .send(reqUser)
+                .send(testUser)
                 .end(apiCb(cb));
 
         it("should create user", (done) => {
-            callPostApi(null, (res) => {
+            const callPost = (user: any, cb: TApiCb) =>
+                agent
+                    .post(createRoute(paths.users, "registered"))
+                    .send(reqUser)
+                    .end(apiCb(cb));
+            callPost(null, (res) => {
                 expect(res.status).toBe(HttpStatusCodes.CREATED);
                 done();
             });
         });
 
         it("should conflict", (done) => {
-            callPostApi(null, (res) => {
+            const callPost = (user: any, cb: TApiCb) =>
+                agent
+                    .post(createRoute(paths.users, "registered"))
+                    .send(testUser)
+                    .end(apiCb(cb));
+            callPost(null, (res) => {
                 expect(res.status).toBe(HttpStatusCodes.CONFLICT);
                 done();
             });
