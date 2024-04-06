@@ -5,8 +5,7 @@ import { duplicateNumberUser, maxSpamUser, testUser } from "./common";
 
 const REGISTERED_USER_COUNT = 10;
 const NON_REGISTERED_USER_COUNT = 30;
-const SPAM_REPORT_COUNT = 200;
-
+const SPAM_REPORT_COUNT = 60;
 
 function createRegUser() {
     return {
@@ -78,16 +77,14 @@ const spamRequests = faker.helpers.multiple(createSpamRequest, {
     count: SPAM_REPORT_COUNT,
 });
 
-const spamRequestsForMaxSpam = faker.helpers.multiple(
-    () => ({
+// For for sure max spam
+for (let i = 1; i < 40; i++) {
+    spamRequests.push({
         phoneNumber: maxSpamUser.phoneNumber,
         countryCode: maxSpamUser.countryCode,
-        markedByUserId: Math.floor(Math.random() * (REGISTERED_USER_COUNT + 1)),
-    }),
-    { count: Math.floor(SPAM_REPORT_COUNT * 0.75) },
-);
-
-spamRequests.push(...spamRequestsForMaxSpam);
+        markedByUserId: i,
+    });
+}
 
 const body = {
     spamRequests,

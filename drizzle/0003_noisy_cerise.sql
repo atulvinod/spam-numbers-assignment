@@ -1,0 +1,1 @@
+ALTER TABLE "sns_users" ALTER COLUMN "spam_likelihood" SET DEFAULT 0;

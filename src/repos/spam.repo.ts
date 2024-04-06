@@ -1,9 +1,30 @@
 import db from "@src/lib/database";
 import spamReportModel from "@src/models/spam_reports.model";
+import { trx } from "@src/other/classes";
 import errors from "@src/other/errors";
 import * as usersRepo from "@src/repos/user.repo";
-import { count } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { PostgresError } from "postgres";
+import userModel from "@src/models/user.model";
+
+async function updateSpamLikelihood(phoneNumberId: number, tx: trx) {
+    const [totalCount] = await tx
+        .select({ count: count() })
+        .from(spamReportModel);
+
+    const [spamCountOfNumber] = await tx
+        .select({ count: count() })
+        .from(spamReportModel)
+        .where(eq(spamReportModel.id, phoneNumberId));
+
+    const percentage = (spamCountOfNumber.count / totalCount.count).toPrecision(
+        2,
+    );
+    await tx
+        .update(userModel)
+        .set({ spamLikelihood: percentage })
+        .where(eq(userModel.id, phoneNumberId));
+}
 
 export async function createSpamReport(obj: {
     markedByUserId: number;
@@ -26,6 +47,7 @@ export async function createSpamReport(obj: {
                         phoneNumberId: existingPhoneNumber.id,
                     })
                     .returning({ id: spamReportModel.id });
+                await updateSpamLikelihood(existingPhoneNumber.id, trx);
                 return { id: spamReport.id };
             }
             const newPhoneNumber = await usersRepo.createUser({
@@ -39,6 +61,7 @@ export async function createSpamReport(obj: {
                     phoneNumberId: +newPhoneNumber.id,
                 })
                 .returning({ id: spamReportModel.id });
+            await updateSpamLikelihood(newPhoneNumber.id, trx);
             return { id: spamReport.id };
         });
 

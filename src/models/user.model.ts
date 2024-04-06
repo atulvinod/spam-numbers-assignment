@@ -7,6 +7,7 @@ import {
     varchar,
     integer,
     boolean,
+    numeric,
 } from "drizzle-orm/pg-core";
 
 const model = pgTable(
@@ -19,6 +20,7 @@ const model = pgTable(
         isRegisteredUser: boolean("is_registered_user").default(false),
         password: text("password"),
         created: timestamp("created").defaultNow(),
+        spamLikelihood: numeric("spam_likelihood").default("0"),
     },
     (table) => {
         return {

@@ -12,6 +12,7 @@ export async function searchPersonsByName(name: string, currentUserId: number) {
             contact_id: contactDetailsModel.id,
             name: contactDetailsModel.name,
             email: sql`CASE WHEN ${userModel.contactOfId} = ${currentUserId} AND ${userModel.isRegisteredUser} = TRUE THEN ${contactDetailsModel.email} ELSE NULL END AS email`,
+            spamLikelihood: userModel.spamLikelihood,
         })
         .from(contactDetailsModel)
         .leftJoin(userModel, eq(contactDetailsModel.user_id, userModel.id));
@@ -43,6 +44,7 @@ export async function searchPersonsByPhone(
         contact_id: contactDetailsModel.id,
         name: contactDetailsModel.name,
         email: sql`CASE WHEN ${userModel.contactOfId} = ${currentUserId} AND ${userModel.isRegisteredUser} = TRUE THEN ${contactDetailsModel.email} ELSE NULL END AS email`,
+        spamLikelihood: userModel.spamLikelihood,
     };
 
     const base = db

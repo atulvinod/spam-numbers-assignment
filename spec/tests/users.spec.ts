@@ -57,6 +57,7 @@ describe("[UNIT] test user registration and login", () => {
                 phoneNumber: user.phoneNumber,
                 countryCode: user.countryCode,
                 contactOfId: null,
+                spamLikelihood: "0",
             }),
         );
 

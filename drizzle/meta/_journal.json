@@ -15,6 +15,20 @@
       "when": 1712326697836,
       "tag": "0001_purple_sunfire",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1712401299834,
+      "tag": "0002_colossal_guardian",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1712401353347,
+      "tag": "0003_noisy_cerise",
+      "breakpoints": true
     }
   ]
 }
