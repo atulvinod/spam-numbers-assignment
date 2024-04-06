@@ -3,7 +3,7 @@ import * as spamService from "@src/services/spam.service";
 import * as spamRepo from "@src/repos/spam.repo";
 import errors from "@src/other/errors";
 
-describe("test cases for spam", () => {
+describe("[UNIT] test cases for spam", () => {
     it("should create a spam report", async () => {
         spyOn(spamRepo, "createSpamReport").and.returnValue(
             Promise.resolve({ id: 1 }),

@@ -34,7 +34,7 @@
             }
           },
           {
-            "name": "query",
+            "name": "name",
             "in": "query",
             "schema": {
               "type": "string"

@@ -2,6 +2,7 @@
     "name": "express-gen-ts",
     "version": "0.0.0",
     "scripts": {
+        "seed-test-db":"npx tsx ./spec/support/seed_database.ts --env test",
         "swagger-config": "npx ts-node ./src/swagger.ts",
         "build": "npx ts-node build.ts",
         "lint": "npx eslint --ext .ts src/",
@@ -61,6 +62,7 @@
         "ts-command-line-args": "^2.5.1"
     },
     "devDependencies": {
+        "@faker-js/faker": "^8.4.1",
         "@types/cookie-parser": "^1.4.7",
         "@types/express": "^4.17.21",
         "@types/find": "^0.2.4",

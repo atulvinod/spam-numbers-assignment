@@ -12,10 +12,10 @@ import apiCb from "spec/support/apiCb";
 import HttpStatusCodes from "@src/constants/httpStatusCodes";
 
 const user = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    password: "password123",
-    phoneNumber: "1234567890",
+    name: "testuser",
+    email: "testuser@email.com",
+    password: "testuserpassword",
+    phoneNumber: "0000000000",
     countryCode: "+91",
 };
 
@@ -25,7 +25,7 @@ const resultValue = {
     name: user.name,
 };
 
-describe("unit test user registration and login", () => {
+describe("[UNIT] test user registration and login", () => {
     it("should create normal user", async () => {
         spyOn(userRepo, "createUser").and.returnValue(
             Promise.resolve({ id: 2 }),
@@ -78,10 +78,10 @@ describe("[API] Registered Users", () => {
 
     describe("[POST]", () => {
         const reqUser = {
-            phoneNumber: "1234567809",
-            countryCode: "+91",
-            password: "mypassword",
-            name: "test user",
+            phoneNumber: user.phoneNumber,
+            countryCode: user.countryCode,
+            password: user.password,
+            name: user.name,
         };
         const callPostApi = (user: any, cb: TApiCb) =>
             agent

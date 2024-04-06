@@ -21,12 +21,11 @@ api.get(
                 required: true,
                 description: "Only two valid values, 'name' and 'number'"
             }
-            #swagger.parameters['query'] = {
+            #swagger.parameters['name'] = {
                 in: 'query',
             }
             #swagger.parameters['phoneNumber'] = {
                 in : 'query',
-                type: number
             }
             #swagger.parameters['countryCode'] = {
                 in:'query',
@@ -36,11 +35,11 @@ api.get(
             }]
         */
         try {
-            const { searchBy, query, phoneNumber, countryCode } = req.query;
+            const { searchBy, name, phoneNumber, countryCode } = req.query;
             switch (searchBy) {
                 case "name": {
                     const result = await searchService.searchByName(
-                        query as string,
+                        name as string,
                         (req.user as { id: number }).id,
                     );
                     return res.json({ data: { result } });
