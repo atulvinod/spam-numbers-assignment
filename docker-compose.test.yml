@@ -14,7 +14,7 @@ services:
     command: ./wait-for-it.sh test-db:5432 -- ./run-tests.sh
     build:
       context: .
-      dockerfile: app.Dockerfile
+      dockerfile: tests.Dockerfile
     depends_on:
       - "test-db"
       

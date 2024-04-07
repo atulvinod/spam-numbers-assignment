@@ -3,7 +3,6 @@ RUN apk update
 RUN apk add --no-cache bash
 SHELL [ "/bin/bash","-c" ]
 
-ARG env=test
 ARG cookieDomain=localhost
 ARG cookiePath=/
 ARG secureCookie=false
@@ -15,7 +14,6 @@ ARG jwtIssuer=localhost
 ARG jwtExp=1y
 ARG dbUrl=postgres://postgres:mypassword@test-db/postgres
 
-ENV NODE_ENV=${env}
 ENV COOKIE_DOMAIN=${cookieDomain}
 ENV COOKIE_PATH=${cookiePath}
 ENV COOKIE_SECRET=${cookieSecret}
@@ -28,10 +26,8 @@ ENV DB_URL=${dbUrl}
 
 WORKDIR /app
 COPY . .
-RUN chmod +x ./wait-for-it.sh
-RUN chmod +x ./run-tests.sh
 RUN mkdir env
-RUN touch ./env/test.env
+RUN touch ./env/production.env
 RUN npm install
 RUN npm run build
 CMD [ "npm","run","start" ]
