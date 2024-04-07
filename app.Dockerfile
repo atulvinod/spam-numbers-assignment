@@ -33,4 +33,5 @@ RUN chmod +x ./run-tests.sh
 RUN mkdir env
 RUN touch ./env/test.env
 RUN npm install
-CMD [ "bash" ]
+RUN npm run build
+CMD [ "npm","run","start" ]
