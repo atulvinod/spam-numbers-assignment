@@ -3,7 +3,6 @@ import user from '@src/models/user.model';
 import { and, count, eq } from "drizzle-orm";
 import { hash } from "bcrypt";
 import * as contactDetailsRepo from "@src/repos/contact_details.repo";
-import * as _ from "lodash";
 import errors from "@src/other/errors";
 import { trx } from "@src/other/classes";
 import { PostgresError } from "postgres";
