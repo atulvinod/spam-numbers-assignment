@@ -92,3 +92,27 @@ function _iterate(param: unknown, prop: string): void {
     }
 }
 
+export type searchResponseType = {
+    data: {
+        result: {
+            contact_id: number;
+            name: string;
+            email?: string;
+            spam_likelihood: string;
+        }[];
+    };
+};
+
+export type getUserResponseType = {
+    data: {
+        user: {
+            id: number;
+            spam_likelihood: string;
+            email: string | null;
+            phone_number:string,
+            country_code: string
+        };
+    };
+};
+
+export const ASYNC_TC_TIMEOUT = 15000;

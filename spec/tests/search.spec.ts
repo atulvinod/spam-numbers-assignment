@@ -5,7 +5,12 @@ import { createRoute } from "@src/util/misc";
 import paths from "@src/constants/paths";
 import HttpStatusCodes from "@src/constants/httpStatusCodes";
 import { getAgent } from "spec/support/utils";
-import { duplicateNumberUser, testUser, apiCb } from "spec/support/common";
+import {
+    duplicateNumberUser,
+    testUser,
+    apiCb,
+    ASYNC_TC_TIMEOUT,
+} from "spec/support/common";
 
 type searchResponse = {
     data: {
@@ -13,7 +18,6 @@ type searchResponse = {
     };
 };
 
-const TIMEOUT = 15000;
 describe("[API] Search", () => {
     let agent: TestAgent<Test>;
 
@@ -21,30 +25,30 @@ describe("[API] Search", () => {
         agent = getAgent();
     });
 
-    describe("[GET] retrieve test user", () => {
+    describe("[GET] Validation of search functionality", () => {
         let token: string | null = null;
         it(
             "[POST] should create new user",
             (done) => {
-                const callPost = (_: any, cb: TApiCb) =>
+                const callPost = ( cb: TApiCb) =>
                     agent
                         .post(createRoute(paths.users, "login"))
                         .send(testUser)
                         .end(apiCb(cb));
 
-                callPost(null, (res) => {
+                callPost( (res) => {
                     expect(res.status).toBe(HttpStatusCodes.OK);
                     token = (res.body as { data: { token: string } }).data
                         .token;
                     done();
                 });
             },
-            TIMEOUT,
+            ASYNC_TC_TIMEOUT,
         );
         it(
             "[GET] should get test user",
             (done) => {
-                const callGet = (_: any, cb: TApiCb) =>
+                const callGet = ( cb: TApiCb) =>
                     agent
                         .get(createRoute(paths.search))
                         .set("Authorization", `Bearer ${token}`)
@@ -54,20 +58,20 @@ describe("[API] Search", () => {
                         })
                         .end(apiCb(cb));
 
-                callGet(null, (res) => {
+                callGet((res) => {
                     expect(
                         (res.body as searchResponse).data.result[0].name,
                     ).toEqual(testUser.name);
                     done();
                 });
             },
-            TIMEOUT,
+            ASYNC_TC_TIMEOUT,
         );
 
         it(
             "[GET] should get users containing 't'",
             (done) => {
-                const callGet = (_: any, cb: TApiCb) => {
+                const callGet = ( cb: TApiCb) => {
                     agent
                         .get(createRoute(paths.search))
                         .set("Authorization", `Bearer ${token}`)
@@ -75,20 +79,20 @@ describe("[API] Search", () => {
                         .end(apiCb(cb));
                 };
 
-                callGet(null, (res) => {
+                callGet( (res) => {
                     expect(
                         (res.body as searchResponse).data.result.length,
                     ).toBeGreaterThan(0);
                     done();
                 });
             },
-            TIMEOUT,
+            ASYNC_TC_TIMEOUT,
         );
 
         it(
             "[GET] should get user via phone number",
             (done) => {
-                const callGet = (_: any, cb: TApiCb) =>
+                const callGet = ( cb: TApiCb) =>
                     agent
                         .get(createRoute(paths.search))
                         .set("Authorization", `Bearer ${token}`)
@@ -99,20 +103,20 @@ describe("[API] Search", () => {
                         })
                         .end(apiCb(cb));
 
-                callGet(null, (res) => {
+                callGet( (res) => {
                     expect(
                         (res.body as searchResponse).data.result.length,
                     ).toEqual(1);
                     done();
                 });
             },
-            TIMEOUT,
+            ASYNC_TC_TIMEOUT,
         );
 
         it(
             "[GET] should return two phone numbers for a duplicate contact",
             (done) => {
-                const callGet = (_: any, cb: TApiCb) =>
+                const callGet = ( cb: TApiCb) =>
                     agent
                         .get(createRoute(paths.search))
                         .set("Authorization", `Bearer ${token}`)
@@ -122,14 +126,14 @@ describe("[API] Search", () => {
                             countryCode: "+91",
                         })
                         .end(apiCb(cb));
-                callGet(null, (res) => {
+                callGet( (res) => {
                     expect(
                         (res.body as searchResponse).data.result.length,
                     ).toBeGreaterThan(1);
                     done();
                 });
             },
-            TIMEOUT,
+            ASYNC_TC_TIMEOUT,
         );
     });
 });

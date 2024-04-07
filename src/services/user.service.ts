@@ -38,7 +38,7 @@ export async function createRegisteredUser(user: {
 
 export async function createUser(user: {
     name: string;
-    email?: string;
+    email?: string | null;
     phoneNumber: string;
     countryCode: string;
     contactOfUserId: number;
@@ -85,8 +85,14 @@ export async function authenticateLogin(
     );
 }
 
-export async function findUserByContactId(contactId: number) {
-    const result = await contactRepo.findUserByContactId(contactId);
+export async function findUserByContactId(
+    contactId: number,
+    currentUserId: number,
+) {
+    const result = await contactRepo.findUserByContactId(
+        contactId,
+        currentUserId,
+    );
     if (!result) {
         throw errors.NOT_FOUND;
     }

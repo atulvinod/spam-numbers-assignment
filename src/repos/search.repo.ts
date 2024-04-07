@@ -12,7 +12,7 @@ export async function searchPersonsByName(name: string, currentUserId: number) {
             contact_id: contactDetailsModel.id,
             name: contactDetailsModel.name,
             email: sql`CASE WHEN ${userModel.contactOfId} = ${currentUserId} AND ${userModel.isRegisteredUser} = TRUE THEN ${contactDetailsModel.email} ELSE NULL END AS email`,
-            spamLikelihood: userModel.spamLikelihood,
+            spam_likelihood: userModel.spamLikelihood,
         })
         .from(contactDetailsModel)
         .leftJoin(userModel, eq(contactDetailsModel.user_id, userModel.id));
@@ -26,6 +26,7 @@ export async function searchPersonsByName(name: string, currentUserId: number) {
         return agg;
     }, []);
 
+    if (aggSql1Ids.length) {
     const sql2 = await base.where(
         and(
             notInArray(contactDetailsModel.id, aggSql1Ids),
@@ -33,6 +34,8 @@ export async function searchPersonsByName(name: string, currentUserId: number) {
         ),
     );
     return [...sql1, ...sql2];
+    }
+    return sql1;
 }
 
 export async function searchPersonsByPhone(
@@ -44,7 +47,7 @@ export async function searchPersonsByPhone(
         contact_id: contactDetailsModel.id,
         name: contactDetailsModel.name,
         email: sql`CASE WHEN ${userModel.contactOfId} = ${currentUserId} AND ${userModel.isRegisteredUser} = TRUE THEN ${contactDetailsModel.email} ELSE NULL END AS email`,
-        spamLikelihood: userModel.spamLikelihood,
+        spam_likelihood: userModel.spamLikelihood,
     };
 
     const base = db

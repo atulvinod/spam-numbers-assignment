@@ -17,18 +17,14 @@ api.get(
             #swagger.path = '/search'
             #swagger.description = 'Global search for users using name or phone number'
             #swagger.parameters['searchBy'] = {
-                in: 'query',
-                required: true,
-                description: "Only two valid values, 'name' and 'number'"
+                description: 'For setting search strategy, either by \'name\' or \'number\'',
+                required: true
             }
             #swagger.parameters['name'] = {
-                in: 'query',
             }
             #swagger.parameters['phoneNumber'] = {
-                in : 'query',
             }
             #swagger.parameters['countryCode'] = {
-                in:'query',
             }
             #swagger.security = [{
             "bearerAuth":[]

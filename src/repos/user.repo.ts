@@ -55,7 +55,7 @@ export async function findRegisteredByPhoneNumber(
 
 export async function createUser(obj: {
     name?: string;
-    email?: string;
+    email?: string | null;
     phoneNumber: string;
     countryCode: string;
     contactOfUserId?: number;

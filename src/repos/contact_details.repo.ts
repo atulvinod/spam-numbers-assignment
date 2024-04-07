@@ -2,7 +2,7 @@ import db from "@src/lib/database";
 import contactDetailsModel from "@src/models/contact_details.model";
 import { trx } from "@src/other/classes";
 import userModel from "@src/models/user.model";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 export async function createContactDetails(
     obj: typeof contactDetailsModel.$inferInsert,
@@ -15,9 +15,19 @@ export async function createContactDetails(
     return result.insertedId;
 }
 
-export async function findUserByContactId(contactId: number) {
+export async function findUserByContactId(
+    contactId: number,
+    currentUserId: number,
+) {
     const [result] = await db
-        .select()
+        .select({
+            id: contactDetailsModel.id,
+            spam_likelihood: userModel.spamLikelihood,
+            name: contactDetailsModel.name,
+            email: sql`CASE WHEN ${userModel.contactOfId} = ${currentUserId} THEN ${contactDetailsModel.email} ELSE NULL END AS email`,
+            phone_number: userModel.phoneNumber,
+            country_code: userModel.countryCode,
+        })
         .from(userModel)
         .innerJoin(
             contactDetailsModel,

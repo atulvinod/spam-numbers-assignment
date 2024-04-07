@@ -10,6 +10,7 @@ import {
 import jetValidator from "jet-validator";
 const validate = jetValidator();
 const api = Router();
+import authenticate from "@src/middlewares/auth";
 
 api.post(
     "/registered",
@@ -96,7 +97,7 @@ api.post(
                 countryCode: countryCode as string,
                 name: name as string,
                 phoneNumber: phoneNumber as string,
-                email: email as string,
+                email: email as string | undefined,
             });
             return res
                 .status(HttpStatusCodes.CREATED)
@@ -141,9 +142,13 @@ api.post(
     },
 );
 
-api.get("/", validate(["id", "number", "query"]), async (req, res, next) => {
-    try {
-        /*
+api.get(
+    "/",
+    authenticate,
+    validate(["id", "number", "query"]),
+    async (req, res, next) => {
+        try {
+            /*
             #swagger.path = '/users'
             #swagger.description = 'to get contact details of user'
             #swagger.parameters['id'] = {
@@ -155,12 +160,16 @@ api.get("/", validate(["id", "number", "query"]), async (req, res, next) => {
                 "bearerAuth":[]
             }]
         */
-        const { id } = req.query;
-        const user = await userService.findUserByContactId(Number(id));
-        return res.json({ data: { user } });
-    } catch (error) {
-        return routeErrorHandler(error as Error, next);
-    }
-});
+            const { id } = req.query;
+            const user = await userService.findUserByContactId(
+                Number(id),
+                (req.user as { id: number }).id,
+            );
+            return res.json({ data: { user } });
+        } catch (error) {
+            return routeErrorHandler(error as Error, next);
+        }
+    },
+);
 
 export default api;

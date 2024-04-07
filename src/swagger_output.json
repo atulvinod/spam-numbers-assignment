@@ -28,6 +28,8 @@
         "parameters": [
           {
             "name": "searchBy",
+            "description": "For setting search strategy, either by 'name' or 'number'",
+            "required": true,
             "in": "query",
             "schema": {
               "type": "string"
