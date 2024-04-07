@@ -1,6 +1,13 @@
-## About
+## Spam numbers application
 
 This project was created with [express-generator-typescript](https://github.com/seanpmaxwell/express-generator-typescript).
+
+The swagger documentation can be accessed at `{baseUrl}/api-docs`
+
+Deployed at [render](https://spam-app-latest.onrender.com/)
+
+## To run tests
+`docker compose -f .\docker-compose.test.yml up --build --exit-code-from tests`
 
 
 ## Available Scripts
