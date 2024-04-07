@@ -9,5 +9,5 @@ import server from './server';
 
 const SERVER_START_MSG = ('Express server started on port: ' + 
   EnvVars.port.toString());
-
+console.log(SERVER_START_MSG);
 server.listen(EnvVars.port, () => logger.info(SERVER_START_MSG));
