@@ -8,8 +8,8 @@ const doc = {
     },
     servers: [
         {
-            url: "http://localhost:3000/api/v1",
-            description: "API",
+            url: "v1",
+            description: "v1 API",
         },
     ],
     components: {

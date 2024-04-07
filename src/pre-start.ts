@@ -7,7 +7,7 @@
 // NOTE: DO NOT IMPORT ANY SOURCE CODE HERE
 import path from 'path';
 import dotenv from 'dotenv';
-import { parse, CommandLineOption } from 'ts-command-line-args';
+import { parse } from "ts-command-line-args";
 
 // **** Types **** //
 
