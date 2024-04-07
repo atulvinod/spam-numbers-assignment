@@ -147,7 +147,8 @@ describe("[API] Validating Adding Contacts, register user validation", () => {
 
     let testAgentId: number | null = null;
     let testAgentToken: string | null = null;
-    let newContactId: number | null = null;
+    let newContactIdViaSearch: number | null = null;
+    let newContactIdViaCreate: number | null = null;
 
     beforeAll((done) => {
         agent = supertest.agent(app);
@@ -223,6 +224,9 @@ describe("[API] Validating Adding Contacts, register user validation", () => {
                 }
 
                 expect(res.status).toEqual(HttpStatusCodes.CREATED);
+                newContactIdViaCreate = (
+                    res.body as { data: { result: { id: number } } }
+                ).data.result.id;
                 done();
             });
         },
@@ -243,8 +247,9 @@ describe("[API] Validating Adding Contacts, register user validation", () => {
 
         callGet((res) => {
             expect(res.status).toEqual(HttpStatusCodes.OK);
-            newContactId = (res.body as searchResponseType).data.result[0]
-                .contact_id;
+            newContactIdViaSearch = (res.body as searchResponseType).data
+                .result[0].contact_id;
+            expect(newContactIdViaCreate).toEqual(newContactIdViaSearch);
             done();
         });
     });
@@ -256,7 +261,7 @@ describe("[API] Validating Adding Contacts, register user validation", () => {
                 agent
                     .get(createRoute(paths.users))
                     .query({
-                        id: newContactId,
+                        id: newContactIdViaSearch,
                     })
                     .set("Authorization", `Bearer ${testAgentToken}`)
                     .end(apiCb(cb));

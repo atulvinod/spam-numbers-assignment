@@ -83,7 +83,7 @@ export async function createUser(obj: {
                 })
                 .returning({ id: user.id });
 
-            const id = contactDetailsRepo.createContactDetails(
+            const id = await contactDetailsRepo.createContactDetails(
                 {
                     email: obj.email,
                     name: obj.name,
