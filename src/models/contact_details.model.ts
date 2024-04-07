@@ -11,9 +11,9 @@ const model = pgTable(
     "sns_contact_details",
     {
         id: serial("id").primaryKey(),
-        name: text("name"),
+        name: text("name").notNull(),
         email: text("email"),
-        user_id: integer("user_id"),
+        user_id: integer("user_id").notNull(),
         created: timestamp("created").defaultNow(),
     },
     (table) => {

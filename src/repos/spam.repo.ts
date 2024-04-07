@@ -3,7 +3,7 @@ import spamReportModel from "@src/models/spam_reports.model";
 import { trx } from "@src/other/classes";
 import errors from "@src/other/errors";
 import * as usersRepo from "@src/repos/user.repo";
-import { and, count, eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { PostgresError } from "postgres";
 import userModel from "@src/models/user.model";
 
@@ -51,6 +51,7 @@ export async function createSpamReport(obj: {
                 return { id: spamReport.id };
             }
             const newPhoneNumber = await usersRepo.createUser({
+                name: "Spam number",
                 phoneNumber: obj.phoneNumber,
                 countryCode: obj.countryCode,
             });
@@ -61,7 +62,7 @@ export async function createSpamReport(obj: {
                     phoneNumberId: +newPhoneNumber.id,
                 })
                 .returning({ id: spamReportModel.id });
-            await updateSpamLikelihood(newPhoneNumber.id, trx);
+            await updateSpamLikelihood(+newPhoneNumber.id, trx);
             return { id: spamReport.id };
         });
 

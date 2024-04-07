@@ -54,7 +54,7 @@ export async function findRegisteredByPhoneNumber(
 }
 
 export async function createUser(obj: {
-    name?: string;
+    name: string;
     email?: string | null;
     phoneNumber: string;
     countryCode: string;
@@ -62,14 +62,14 @@ export async function createUser(obj: {
 }) {
     const existing = await findByPhoneNumber(obj.phoneNumber, obj.countryCode);
     if (existing) {
-        await contactDetailsRepo.createContactDetails({
+        const id = await contactDetailsRepo.createContactDetails({
             email: obj.email,
             name: obj.name,
             user_id: existing.id,
         });
 
         return {
-            id: existing.id,
+            id,
         };
     }
     try {
@@ -83,16 +83,17 @@ export async function createUser(obj: {
                 })
                 .returning({ id: user.id });
 
-            if (obj.email || obj.name)
-                await contactDetailsRepo.createContactDetails(
-                    {
-                        email: obj.email,
-                        name: obj.name,
-                        user_id: newUser.id,
-                    },
-                    trx,
-                );
-            return newUser;
+            const id = contactDetailsRepo.createContactDetails(
+                {
+                    email: obj.email,
+                    name: obj.name,
+                    user_id: newUser.id,
+                },
+                trx,
+            );
+            return {
+                id,
+            };
         });
         return result;
     } catch (error) {
@@ -103,6 +104,17 @@ export async function createUser(obj: {
         }
         throw error;
     }
+}
+
+async function setUserAsRegistered(
+    userId: number,
+    password: string,
+    trx?: trx,
+) {
+    await (trx ?? db)
+        .update(user)
+        .set({ isRegisteredUser: true, password })
+        .where(eq(user.id, userId));
 }
 
 export async function createRegisteredUser(obj: {
@@ -121,16 +133,36 @@ export async function createRegisteredUser(obj: {
         if (existing.isRegisteredUser) {
             throw errors.USER_ALREADY_EXISTS;
         }
-        await db
-            .update(user)
-            .set({ isRegisteredUser: true, password: hashedPassword })
-            .where(eq(user.id, existing.id));
+        const updatedExistingUser = db.transaction(async (trx) => {
+            const existingContacts =
+                await contactDetailsRepo.findContactByUserId(existing.id);
+            if (existingContacts.length) {
+                /**If user already existed in system, but was not registered,
+                 *  then delete all previous contacts and create new one  */
+                const aggregateIds = existingContacts.reduce(
+                    (agg: number[], v) => {
+                        agg.push(v.id);
+                        return agg;
+                    },
+                    [],
+                );
 
-        return _.pick(existing, ["id", "name", "email"]) as {
-            id: number;
-            name: string;
-            email: string;
-        };
+                await contactDetailsRepo.deleteContacts(aggregateIds, trx);
+            }
+            const id = await contactDetailsRepo.createContactDetails(
+                {
+                    name: obj.name,
+                    user_id: existing.id,
+                    email: obj.email,
+                },
+                trx,
+            );
+            await setUserAsRegistered(existing.id, hashedPassword, trx);
+            return {
+                id,
+            };
+        });
+        return updatedExistingUser;
     }
 
     const insertedUser = await db.transaction(async (tx) => {
@@ -145,7 +177,7 @@ export async function createRegisteredUser(obj: {
                 })
                 .returning({ insertedId: user.id });
 
-            await contactDetailsRepo.createContactDetails(
+            const id = await contactDetailsRepo.createContactDetails(
                 {
                     name: obj.name,
                     email: obj.email,
@@ -155,9 +187,7 @@ export async function createRegisteredUser(obj: {
             );
 
             return {
-                id: newUser.insertedId,
-                phoneNumber: obj.phoneNumber,
-                countryCode: obj.countryCode,
+                id,
             };
         } catch (error) {
             tx.rollback();

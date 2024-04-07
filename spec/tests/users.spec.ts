@@ -11,6 +11,7 @@ import paths from "@src/constants/paths";
 import {
     apiCb,
     ASYNC_TC_TIMEOUT,
+    duplicateNumberUser,
     getUserResponseType,
     searchResponseType,
     testUser,
@@ -134,7 +135,7 @@ describe("[API] Validation of user related functionality", () => {
     });
 });
 
-describe("[API] Validating Adding Contacts", () => {
+describe("[API] Validating Adding Contacts, register user validation", () => {
     let agent: TestAgent<Test>;
 
     const testContact = {
@@ -259,8 +260,6 @@ describe("[API] Validating Adding Contacts", () => {
                     })
                     .set("Authorization", `Bearer ${testAgentToken}`)
                     .end(apiCb(cb));
-            console.log("New contact id", newContactId);
-            console.log("token ", testAgentToken);
             callGet((res) => {
                 if (res.status != Number(HttpStatusCodes.OK)) {
                     console.log(res.body);
@@ -274,4 +273,41 @@ describe("[API] Validating Adding Contacts", () => {
         },
         ASYNC_TC_TIMEOUT,
     );
+
+    it("[POST] register the duplicate user", (done) => {
+        const callPost = (cb: TApiCb) =>
+            agent
+                .post(createRoute(paths.users, "registered"))
+                .send({
+                    phoneNumber: duplicateNumberUser.phoneNumber,
+                    countryCode: duplicateNumberUser.countryCode,
+                    password: "password",
+                    name: "duplicate_user_to_registered",
+                })
+                .end(apiCb(cb));
+
+        callPost((res) => {
+            expect(res.status).toEqual(HttpStatusCodes.CREATED);
+            done();
+        });
+    });
+
+    it("[POST] duplicate user is registered, should return only one result", (done) => {
+        const callGet = (cb: TApiCb) =>
+            agent
+                .get(createRoute(paths.search))
+                .query({
+                    searchBy: "number",
+                    phoneNumber: duplicateNumberUser.phoneNumber,
+                    countryCode: duplicateNumberUser.countryCode,
+                })
+                .set("Authorization", `Bearer ${testAgentToken}`)
+                .end(apiCb(cb));
+        callGet((res) => {
+            expect((res.body as searchResponseType).data.result.length).toEqual(
+                1,
+            );
+            done();
+        });
+    });
 });

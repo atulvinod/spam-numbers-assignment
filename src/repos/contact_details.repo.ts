@@ -2,7 +2,7 @@ import db from "@src/lib/database";
 import contactDetailsModel from "@src/models/contact_details.model";
 import { trx } from "@src/other/classes";
 import userModel from "@src/models/user.model";
-import { eq, sql } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 
 export async function createContactDetails(
     obj: typeof contactDetailsModel.$inferInsert,
@@ -37,4 +37,18 @@ export async function findUserByContactId(
         .limit(1);
 
     return result;
+}
+
+export async function findContactByUserId(userId: number) {
+    const results = await db
+        .select()
+        .from(contactDetailsModel)
+        .where(eq(contactDetailsModel.user_id, userId));
+    return results;
+}
+
+export async function deleteContacts(ids: number[], trx?: trx) {
+    await (trx ?? db)
+        .delete(contactDetailsModel)
+        .where(inArray(contactDetailsModel.id, ids));
 }
