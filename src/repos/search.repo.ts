@@ -11,7 +11,7 @@ export async function searchPersonsByName(name: string, currentUserId: number) {
         .select({
             contact_id: contactDetailsModel.id,
             name: contactDetailsModel.name,
-            email: sql`CASE WHEN ${userModel.contactOfId} = ${currentUserId} AND ${userModel.isRegisteredUser} = TRUE THEN ${contactDetailsModel.email} ELSE NULL END AS email`,
+            email: sql`CASE WHEN (${userModel.contactOfId} = ${currentUserId} AND ${userModel.isRegisteredUser} = TRUE) OR (${userModel.id} = ${currentUserId}) THEN ${contactDetailsModel.email} ELSE NULL END AS email`,
             spam_likelihood: userModel.spamLikelihood,
         })
         .from(contactDetailsModel)
@@ -27,13 +27,13 @@ export async function searchPersonsByName(name: string, currentUserId: number) {
     }, []);
 
     if (aggSql1Ids.length) {
-    const sql2 = await base.where(
-        and(
-            notInArray(contactDetailsModel.id, aggSql1Ids),
-            sql`LOWER(${contactDetailsModel.name}) LIKE ${containsLike}`,
-        ),
-    );
-    return [...sql1, ...sql2];
+        const sql2 = await base.where(
+            and(
+                notInArray(contactDetailsModel.id, aggSql1Ids),
+                sql`LOWER(${contactDetailsModel.name}) LIKE ${containsLike}`,
+            ),
+        );
+        return [...sql1, ...sql2];
     }
     return sql1;
 }
@@ -46,7 +46,7 @@ export async function searchPersonsByPhone(
     const select = {
         contact_id: contactDetailsModel.id,
         name: contactDetailsModel.name,
-        email: sql`CASE WHEN ${userModel.contactOfId} = ${currentUserId} AND ${userModel.isRegisteredUser} = TRUE THEN ${contactDetailsModel.email} ELSE NULL END AS email`,
+        email: sql`CASE WHEN (${userModel.contactOfId} = ${currentUserId}  AND ${userModel.isRegisteredUser} = TRUE) OR (${userModel.id} = ${currentUserId}) THEN ${contactDetailsModel.email} ELSE NULL END AS email`,
         spam_likelihood: userModel.spamLikelihood,
     };
 
