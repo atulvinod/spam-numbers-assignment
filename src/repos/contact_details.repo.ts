@@ -24,7 +24,7 @@ export async function findUserByContactId(
             id: contactDetailsModel.id,
             spam_likelihood: userModel.spamLikelihood,
             name: contactDetailsModel.name,
-            email: sql`CASE WHEN ${userModel.contactOfId} = ${currentUserId} THEN ${contactDetailsModel.email} ELSE NULL END AS email`,
+            email: sql`CASE WHEN (${userModel.contactOfId} = ${currentUserId} OR ${userModel.id} = ${currentUserId}) THEN ${contactDetailsModel.email} ELSE NULL END AS email`,
             phone_number: userModel.phoneNumber,
             country_code: userModel.countryCode,
         })
