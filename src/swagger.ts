@@ -8,7 +8,7 @@ const doc = {
     },
     servers: [
         {
-            url: "v1",
+            url: "/api/v1",
             description: "v1 API",
         },
     ],
