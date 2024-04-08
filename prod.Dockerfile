@@ -14,6 +14,7 @@ ARG jwtIssuer=localhost
 ARG jwtExp=1y
 ARG dbUrl=postgres://postgres:mypassword@test-db/postgres
 
+
 ENV COOKIE_DOMAIN=${cookieDomain}
 ENV COOKIE_PATH=${cookiePath}
 ENV COOKIE_SECRET=${cookieSecret}
@@ -34,5 +35,6 @@ COPY . .
 RUN mkdir env
 RUN touch ./env/production.env
 RUN npm install
+ENV NODE_ENV=production
 RUN npm run build
 CMD [ "npm","run","start" ]
