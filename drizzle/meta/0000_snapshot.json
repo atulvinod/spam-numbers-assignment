@@ -1,12 +1,12 @@
 {
-  "id": "ba1c538a-658e-4be9-8abe-30bd37d8d24b",
+  "id": "92f33f6f-e6d3-4fba-922a-6bcef9220295",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
   "tables": {
-    "sns-contact-details": {
-      "name": "sns-contact-details",
-      "schema": "",
+    "sns_contact_details": {
+      "name": "sns_contact_details",
+      "schema": "sns",
       "columns": {
         "id": {
           "name": "id",
@@ -18,7 +18,7 @@
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "email": {
           "name": "email",
@@ -30,7 +30,7 @@
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created": {
           "name": "created",
@@ -55,7 +55,7 @@
     },
     "sns_spam_reports": {
       "name": "sns_spam_reports",
-      "schema": "",
+      "schema": "sns",
       "columns": {
         "id": {
           "name": "id",
@@ -107,7 +107,7 @@
     },
     "sns_users": {
       "name": "sns_users",
-      "schema": "",
+      "schema": "sns",
       "columns": {
         "id": {
           "name": "id",
@@ -152,6 +152,13 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
+        },
+        "spam_likelihood": {
+          "name": "spam_likelihood",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'0'"
         }
       },
       "indexes": {

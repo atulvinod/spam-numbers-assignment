@@ -1,1 +1,0 @@
-ALTER TABLE "sns_users" ADD COLUMN "spam_likelihood" numeric;

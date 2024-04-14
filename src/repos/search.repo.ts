@@ -43,6 +43,7 @@ export async function searchPersonsByPhone(
     countryCode: string,
     currentUserId: number,
 ) {
+    
     const select = {
         contact_id: contactDetailsModel.id,
         name: contactDetailsModel.name,

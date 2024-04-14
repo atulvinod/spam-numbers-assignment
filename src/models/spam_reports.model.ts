@@ -1,13 +1,15 @@
 import {
-    pgTable,
     serial,
     integer,
     index,
     timestamp,
     unique,
+    pgSchema,
 } from "drizzle-orm/pg-core";
 
-const model = pgTable(
+const schema = pgSchema("sns");
+
+const model = schema.table(
     "sns_spam_reports",
     {
         id: serial("id").primaryKey(),

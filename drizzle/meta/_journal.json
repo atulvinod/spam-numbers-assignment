@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1712306014404,
-      "tag": "0000_parallel_runaways",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1712326697836,
-      "tag": "0001_purple_sunfire",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1712401299834,
-      "tag": "0002_colossal_guardian",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1712401353347,
-      "tag": "0003_noisy_cerise",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1712468202368,
-      "tag": "0004_outstanding_yellowjacket",
+      "when": 1713077822503,
+      "tag": "0000_cuddly_harpoon",
       "breakpoints": true
     }
   ]
